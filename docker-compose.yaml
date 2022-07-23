@@ -1,0 +1,7 @@
+version: '3.9'
+services:
+  postgresDB:
+    env_file: .env.dev
+    image: postgres:latest
+    ports:
+      - '1234:5432'
