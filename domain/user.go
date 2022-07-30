@@ -9,11 +9,8 @@ import (
 
 type User struct {
 	gorm.Model
-	FirstName       string
-	LastName        string
 	Password        string
 	Email           string
-	MobileNumber    string
 	IsEmailVerified bool
 }
 

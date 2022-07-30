@@ -17,7 +17,7 @@ type AuthJwtHttpHandler struct {
 // @Tags     auth
 // @Accept   json
 // @Produce  json
-// @Param    message  body      domain.RegisterRequestDTO  true  "Registertion data"
+// @Param    message  body      domain.RegisterRequestDTO  true  "Registration data"
 // @Success  200      {object}  common.ResponseDTO
 // @Router   /auth/register [post]
 func (ajh AuthJwtHttpHandler) Register(c echo.Context) error {

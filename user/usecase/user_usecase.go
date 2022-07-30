@@ -70,11 +70,8 @@ func (uc *userUseCase) Fetch(ctx context.Context) ([]domain.User, error) {
 func (uc *userUseCase) Store(ctx context.Context, userDTO domain.StoreUserRequestDTO) error {
 	hashPassword, _ := uc.GeneratePasswordHash(userDTO.Password)
 	user := domain.User{
-		FirstName:    "",
-		LastName:     "",
-		Password:     hashPassword,
-		Email:        userDTO.Email,
-		MobileNumber: "",
+		Password: hashPassword,
+		Email:    userDTO.Email,
 	}
 	return uc.userRepository.Store(ctx, user)
 }

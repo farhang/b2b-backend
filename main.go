@@ -71,7 +71,7 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 		_ = c.JSON(http.StatusUnprocessableEntity, CommonErrorDTO{Errors: out, Message: http.StatusText(http.StatusUnprocessableEntity)})
 		return
 	}
-
+	_ = c.JSON(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 	c.Logger().Error(err)
 }
 
@@ -97,12 +97,12 @@ func main() {
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s  dbname=%s  port=%s TimeZone=%s", config.Host, config.Username, config.Password, config.DBName, config.Port, config.TimeZone)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	err = db.AutoMigrate(&domain.User{}, domain.EmailVerification{}, domain.Profile{}, domain.Deposit{})
+	err = db.AutoMigrate(&domain.Asset{}, domain.Plan{}, domain.Report{}, domain.Card{}, domain.Withdraw{}, domain.Credit{})
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	err = db.AutoMigrate(&domain.User{}, domain.EmailVerification{})
 
 	if err != nil {
 		log.Fatal(err)

@@ -61,11 +61,8 @@ func (uh *UserHttpHandler) FetchUsers(c echo.Context) error {
 	usersResponse := make([]domain.UserResponseDTO, len(users))
 	for i := range users {
 		usersResponse[i] = domain.UserResponseDTO{
-			ID:           users[i].ID,
-			FirstName:    users[i].FirstName,
-			LastName:     users[i].LastName,
-			Email:        users[i].Email,
-			MobileNumber: users[i].MobileNumber,
+			ID:    users[i].ID,
+			Email: users[i].Email,
 		}
 	}
 	return c.JSON(http.StatusOK, common.ResponseDTO{
@@ -121,11 +118,8 @@ func (uh *UserHttpHandler) GetMe(ctx echo.Context) error {
 	}
 	return ctx.JSON(http.StatusOK, common.ResponseDTO{
 		Data: domain.UserResponseDTO{
-			ID:           me.ID,
-			FirstName:    me.FirstName,
-			LastName:     me.LastName,
-			Email:        me.Email,
-			MobileNumber: me.MobileNumber,
+			ID:    me.ID,
+			Email: me.Email,
 		},
 		Message: "",
 	})

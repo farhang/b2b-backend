@@ -63,7 +63,7 @@ const docTemplate = `{
                 "summary": "Register new user",
                 "parameters": [
                     {
-                        "description": "Registertion data",
+                        "description": "Registration data",
                         "name": "message",
                         "in": "body",
                         "required": true,
