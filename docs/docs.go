@@ -198,6 +198,39 @@ const docTemplate = `{
                 }
             }
         },
+        "/plans/": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "plan"
+                ],
+                "summary": "Add new plan",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.PlanStoreRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login response model including access token",
+                        "schema": {
+                            "$ref": "#/definitions/common.ResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
                 "consumes": [
@@ -296,6 +329,23 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.PlanStoreRequestDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "duration_in_month": {
+                    "type": "integer"
+                },
+                "profit_percent": {
+                    "type": "integer"
+                },
+                "title": {
                     "type": "string"
                 }
             }

@@ -126,7 +126,6 @@ var _ = Describe("Main", func() {
 			By("The status code should be 200")
 			Expect(resp.StatusCode()).To(Equal(http.StatusOK))
 			token = result.Data.AccessToken
-			GinkgoWriter.Println("body", result)
 			Expect(result.Data.AccessToken).ToNot(BeEmpty())
 		})
 		It("should response with 401 status code with incorrect credential", func() {

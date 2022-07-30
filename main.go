@@ -6,6 +6,9 @@ import (
 	"backend-core/common"
 	"backend-core/docs"
 	"backend-core/domain"
+	planHandler "backend-core/plan/delivery"
+	planGormRepository "backend-core/plan/repository"
+	planGormUseCase "backend-core/plan/usecase"
 	userHttpHandler "backend-core/user/delivery"
 	userGormRepository "backend-core/user/repository"
 	userUseCase "backend-core/user/usecase"
@@ -118,6 +121,10 @@ func main() {
 	usrRepository := userGormRepository.NewGormUserRepository(db)
 	usrUseCase := userUseCase.NewUserUseCase(usrRepository)
 	userHttpHandler.NewUserHttpHandler(e, usrUseCase)
+
+	plnRepository := planGormRepository.NewPlanGormRepository(db)
+	plnUseCase := planGormUseCase.NewPlanUseCase(plnRepository)
+	planHandler.NewPlanHttpHandler(e, plnUseCase)
 
 	athUseCase := authJwtUseCase.NewJwtAuthUseCase(usrUseCase)
 	authJwtHttpHandler.NewAuthHttpHandler(e, athUseCase)
