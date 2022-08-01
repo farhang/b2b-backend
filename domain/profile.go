@@ -7,8 +7,8 @@ type Profile struct {
 	Name         string `json:"name"`
 	LastName     string `json:"lastName"`
 	MobileNumber string `json:"mobileNumber"`
-	UserID       uint
 	User         User
-	PlanId       uint
+	UserID       uint
 	Plan         Plan
+	PlanId       uint
 }

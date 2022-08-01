@@ -1,6 +1,8 @@
 package main
 
 import (
+	assetReposiporty "backend-core/asset/repository"
+	assetUseCase "backend-core/asset/usecase"
 	authJwtHttpHandler "backend-core/auth/delivery"
 	authJwtUseCase "backend-core/auth/usecase"
 	"backend-core/common"
@@ -9,21 +11,22 @@ import (
 	planHandler "backend-core/plan/delivery"
 	planGormRepository "backend-core/plan/repository"
 	planGormUseCase "backend-core/plan/usecase"
+	transactionHandler "backend-core/transaction/delivery"
+	transactionRepository "backend-core/transaction/repository"
+	transactionUseCase "backend-core/transaction/usecase"
 	userHttpHandler "backend-core/user/delivery"
 	userGormRepository "backend-core/user/repository"
 	userUseCase "backend-core/user/usecase"
 	"errors"
 	"fmt"
+	"github.com/go-playground/validator/v10"
+	"github.com/labstack/echo/v4"
+	"github.com/swaggo/echo-swagger"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/go-playground/validator/v10"
-	"github.com/labstack/echo/v4"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-
-	"github.com/swaggo/echo-swagger"
 )
 
 type DBConfig struct {
@@ -100,8 +103,8 @@ func main() {
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s  dbname=%s  port=%s TimeZone=%s", config.Host, config.Username, config.Password, config.DBName, config.Port, config.TimeZone)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	err = db.AutoMigrate(&domain.User{}, domain.EmailVerification{}, domain.Profile{}, domain.Deposit{})
-	err = db.AutoMigrate(&domain.Asset{}, domain.Plan{}, domain.Report{}, domain.Card{}, domain.Withdraw{}, domain.Credit{})
+	err = db.AutoMigrate(&domain.User{}, domain.EmailVerification{}, domain.Profile{})
+	err = db.AutoMigrate(&domain.Asset{}, domain.Plan{}, domain.Transaction{})
 
 	if err != nil {
 		log.Fatal(err)
@@ -118,13 +121,20 @@ func main() {
 	docs.SwaggerInfo.Host = os.Getenv("BASE_URL")
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
+	asstRepository := assetReposiporty.NewAssetRepository(db)
+	asstUseCase := assetUseCase.NewAssetUseCase(asstRepository)
+
 	usrRepository := userGormRepository.NewGormUserRepository(db)
-	usrUseCase := userUseCase.NewUserUseCase(usrRepository)
+	usrUseCase := userUseCase.NewUserUseCase(usrRepository, asstUseCase)
 	userHttpHandler.NewUserHttpHandler(e, usrUseCase)
 
 	plnRepository := planGormRepository.NewPlanGormRepository(db)
 	plnUseCase := planGormUseCase.NewPlanUseCase(plnRepository)
 	planHandler.NewPlanHttpHandler(e, plnUseCase)
+
+	transRepository := transactionRepository.NewTransactionRepository(db)
+	transUseCase := transactionUseCase.NewTransactionUseCase(transRepository, usrUseCase, asstUseCase)
+	transactionHandler.NewTransactionHttpHandler(e, transUseCase)
 
 	athUseCase := authJwtUseCase.NewJwtAuthUseCase(usrUseCase)
 	authJwtHttpHandler.NewAuthHttpHandler(e, athUseCase)

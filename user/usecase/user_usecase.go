@@ -13,6 +13,7 @@ import (
 
 type userUseCase struct {
 	userRepository domain.UserRepository
+	au             domain.AssetUseCase
 }
 
 func (uc *userUseCase) GetLatestEmailVerification(ctx context.Context, email string) (*domain.EmailVerification, error) {
@@ -73,6 +74,18 @@ func (uc *userUseCase) Store(ctx context.Context, userDTO domain.StoreUserReques
 		Password: hashPassword,
 		Email:    userDTO.Email,
 	}
+
+	asset := domain.Asset{
+		Amount: 0,
+		User:   user,
+	}
+
+	err := uc.au.Store(ctx, asset)
+
+	if err != nil {
+		return err
+	}
+
 	return uc.userRepository.Store(ctx, user)
 }
 
@@ -98,8 +111,9 @@ func (uc *userUseCase) IsEmailVerified(c context.Context, email string) bool {
 	return user.IsEmailVerified
 }
 
-func NewUserUseCase(userRepository domain.UserRepository) domain.UserUseCase {
+func NewUserUseCase(userRepository domain.UserRepository, au domain.AssetUseCase) domain.UserUseCase {
 	return &userUseCase{
-		userRepository: userRepository,
+		userRepository,
+		au,
 	}
 }

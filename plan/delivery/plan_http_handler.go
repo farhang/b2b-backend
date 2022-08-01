@@ -12,8 +12,15 @@ type PlanHttpHandler struct {
 }
 
 func (ph *PlanHttpHandler) Fetch(ctx echo.Context) error {
-	//TODO implement me
-	panic("implement me")
+	c := ctx.Request().Context()
+	plans, err := ph.pu.Fetch(c)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(http.StatusOK, common.ResponseDTO{
+		Data:    plans,
+		Message: "",
+	})
 }
 
 // Store godoc
@@ -23,7 +30,7 @@ func (ph *PlanHttpHandler) Fetch(ctx echo.Context) error {
 // @Produce  json
 // @Param    message  body      domain.PlanStoreRequestDTO true  "User credentials"
 // @success  200      {object}  common.ResponseDTO "Login response model including access token"
-// @Router   /plans [post]
+// @Router   /plans/ [post]
 func (ph *PlanHttpHandler) Store(ctx echo.Context) error {
 	c := ctx.Request().Context()
 	var p domain.PlanStoreRequestDTO
@@ -51,6 +58,7 @@ func NewPlanHttpHandler(e *echo.Echo, pu domain.PlanUseCase) domain.PlanHttpHand
 	handler := &PlanHttpHandler{pu}
 	pg := e.Group("plans")
 	pg.POST("/", handler.Store)
+	pg.GET("/", handler.Fetch)
 
 	return handler
 }

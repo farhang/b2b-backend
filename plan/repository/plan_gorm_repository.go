@@ -10,9 +10,10 @@ type PlanGormRepository struct {
 	db *gorm.DB
 }
 
-func (p PlanGormRepository) Fetch(ctx context.Context) error {
-	//TODO implement me
-	panic("implement me")
+func (p PlanGormRepository) Fetch(ctx context.Context) ([]domain.Plan, error) {
+	var plans []domain.Plan
+	err := p.db.WithContext(ctx).Find(&plans).Error
+	return plans, err
 }
 
 func (p PlanGormRepository) Store(ctx context.Context, plan domain.Plan) error {

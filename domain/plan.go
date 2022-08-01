@@ -22,13 +22,13 @@ type PlanStoreRequestDTO struct {
 }
 
 type PlanUseCase interface {
-	Fetch(ctx context.Context) error
+	Fetch(ctx context.Context) ([]Plan, error)
 	Store(ctx context.Context, plan PlanStoreRequestDTO) error
 	Delete(ctx context.Context) error
 }
 
 type PlanRepository interface {
-	Fetch(ctx context.Context) error
+	Fetch(ctx context.Context) ([]Plan, error)
 	Store(ctx context.Context, plan Plan) error
 	Delete(ctx context.Context) error
 }

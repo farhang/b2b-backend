@@ -9,9 +9,8 @@ type PlanUseCase struct {
 	pr domain.PlanRepository
 }
 
-func (pu PlanUseCase) Fetch(ctx context.Context) error {
-	//TODO implement me
-	panic("implement me")
+func (pu PlanUseCase) Fetch(ctx context.Context) ([]domain.Plan, error) {
+	return pu.pr.Fetch(ctx)
 }
 
 func (pu PlanUseCase) Store(ctx context.Context, plan domain.PlanStoreRequestDTO) error {

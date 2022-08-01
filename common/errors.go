@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	ErrNotFound                       = errors.New("your requested Item is not found")
+	ErrNotFound                       = errors.New("your requested item is not found")
 	ErrEmailDuplication               = errors.New("the email is already exists")
 	ErrEmailIsNotVerified             = errors.New("the email is not verified")
 	ErrInvalidCredential              = errors.New("invalid credential")
