@@ -7,7 +7,7 @@ import (
 
 type Asset struct {
 	gorm.Model
-	Amount int `json:"tether_balance"`
+	Amount float64 `gorm:"check:amount >= 0" json:"tether_balance"`
 	UserID int
 	User   User
 }
@@ -21,7 +21,7 @@ type AssetRepository interface {
 
 type AssetUseCase interface {
 	Store(ctx context.Context, asset Asset) error
-	GetAmountByUserId(ctx context.Context, userId int) (int, error)
-	IncreaseAmount(ctx context.Context, userId int, amount int) error
-	DecreaseAmount(ctx context.Context, userId int, amount int) error
+	GetAmountByUserId(ctx context.Context, userId int) (float64, error)
+	IncreaseAmount(ctx context.Context, userId int, amount float64) error
+	DecreaseAmount(ctx context.Context, userId int, amount float64) error
 }

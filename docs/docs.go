@@ -199,6 +199,26 @@ const docTemplate = `{
             }
         },
         "/plans/": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "plan"
+                ],
+                "summary": "Get plans",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "post": {
                 "consumes": [
                     "application/json"
@@ -278,6 +298,39 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/domain.DepositRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.ResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/profit": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transaction"
+                ],
+                "summary": "create withdraw transaction",
+                "parameters": [
+                    {
+                        "description": "Withdraw data",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ProfitRequestDTO"
                         }
                     }
                 ],
@@ -400,7 +453,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "amount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "user_id": {
                     "type": "integer"
@@ -443,14 +496,25 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "duration_in_month": {
+                "duration": {
                     "type": "integer"
                 },
-                "profit_percent": {
+                "profitPercent": {
                     "type": "integer"
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.ProfitRequestDTO": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -519,7 +583,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "amount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "user_id": {
                     "type": "integer"

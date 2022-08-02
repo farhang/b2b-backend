@@ -11,15 +11,30 @@ type PlanHttpHandler struct {
 	pu domain.PlanUseCase
 }
 
+// Fetch godoc
+// @Summary  Get plans
+// @Tags     plan
+// @Accept   json
+// @Produce  json
+// @Success   200  {string}  string  "ok"
+// @Router   /plans/ [get]
 func (ph *PlanHttpHandler) Fetch(ctx echo.Context) error {
 	c := ctx.Request().Context()
 	plans, err := ph.pu.Fetch(c)
+	var plansResponse = make([]domain.PlanResponseDTO, len(plans))
+	for i := range plans {
+		plansResponse[i].ID = plans[i].ID
+		plansResponse[i].Title = plans[i].Title
+		plansResponse[i].Duration = plans[i].Duration
+		plansResponse[i].ProfitPercent = plans[i].ProfitPercent
+	}
+
 	if err != nil {
 		return err
 	}
 	return ctx.JSON(http.StatusOK, common.ResponseDTO{
-		Data:    plans,
-		Message: "",
+		Data:    plansResponse,
+		Message: http.StatusText(http.StatusOK),
 	})
 }
 
@@ -56,7 +71,7 @@ func (ph *PlanHttpHandler) Delete(ctx echo.Context) error {
 
 func NewPlanHttpHandler(e *echo.Echo, pu domain.PlanUseCase) domain.PlanHttpHandler {
 	handler := &PlanHttpHandler{pu}
-	pg := e.Group("plans")
+	pg := e.Group("/plans")
 	pg.POST("/", handler.Store)
 	pg.GET("/", handler.Fetch)
 

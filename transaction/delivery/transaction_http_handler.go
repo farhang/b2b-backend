@@ -24,6 +24,7 @@ func (t *TransactionHttpHandler) Fetch(ctx echo.Context) error {
 	c := ctx.Request().Context()
 	uid := ctx.Get("userID").(int)
 	transactions, err := t.tu.FetchByUserId(c, uid)
+
 	transactionsResponse := make([]domain.TransactionResponseDTO, len(transactions))
 	for i := range transactions {
 		transactionsResponse[i] = domain.TransactionResponseDTO{
@@ -97,9 +98,30 @@ func (t *TransactionHttpHandler) WithDraw(ctx echo.Context) error {
 	})
 }
 
+// Profit godoc
+// @Summary  create withdraw transaction
+// @Tags     transaction
+// @Accept   json
+// @Produce  json
+// @Param    message  body      domain.ProfitRequestDTO true  "Withdraw data"
+// @Success  200      {object}  common.ResponseDTO
+// @Router   /transactions/profit [post]
 func (t *TransactionHttpHandler) Profit(ctx echo.Context) error {
-	//TODO implement me
-	panic("implement me")
+	c := ctx.Request().Context()
+	var p domain.ProfitRequestDTO
+
+	if err := ctx.Bind(&p); err != nil {
+		return common.ErrHttpBadRequest(err)
+	}
+	err := t.tu.Profit(c, p)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(http.StatusCreated, common.ResponseDTO{
+		Message: "the transaction is created successfully",
+	})
 }
 
 func NewTransactionHttpHandler(e *echo.Echo, tu domain.TransactionUseCase) domain.TransactionHttpHandler {
@@ -108,6 +130,6 @@ func NewTransactionHttpHandler(e *echo.Echo, tu domain.TransactionUseCase) domai
 	tg.GET("/", handler.Fetch, common.AuthMiddleWare())
 	tg.POST("/deposit", handler.Deposit)
 	tg.POST("/withdraw", handler.WithDraw)
-	tg.POST("profit", handler.Profit)
+	tg.POST("/profit", handler.Profit)
 	return handler
 }

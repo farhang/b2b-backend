@@ -9,7 +9,7 @@ type AssetUseCase struct {
 	ar domain.AssetRepository
 }
 
-func (a AssetUseCase) DecreaseAmount(ctx context.Context, userId int, amount int) error {
+func (a AssetUseCase) DecreaseAmount(ctx context.Context, userId int, amount float64) error {
 	currentAmount, err := a.GetAmountByUserId(ctx, userId)
 	if err != nil {
 		return err
@@ -23,7 +23,7 @@ func (a AssetUseCase) DecreaseAmount(ctx context.Context, userId int, amount int
 	return a.UpdateAmountByUserId(ctx, userId, decreasedAmount)
 }
 
-func (a AssetUseCase) IncreaseAmount(ctx context.Context, userId int, amount int) error {
+func (a AssetUseCase) IncreaseAmount(ctx context.Context, userId int, amount float64) error {
 	currentAmount, err := a.GetAmountByUserId(ctx, userId)
 	if err != nil {
 		return err
@@ -38,7 +38,7 @@ func (a AssetUseCase) Store(ctx context.Context, asset domain.Asset) error {
 	return a.ar.Store(ctx, asset)
 }
 
-func (a AssetUseCase) GetAmountByUserId(ctx context.Context, userId int) (int, error) {
+func (a AssetUseCase) GetAmountByUserId(ctx context.Context, userId int) (float64, error) {
 	asset, err := a.ar.GetByUserId(ctx, userId)
 	if err != nil {
 		return -1, err
@@ -46,7 +46,7 @@ func (a AssetUseCase) GetAmountByUserId(ctx context.Context, userId int) (int, e
 	return asset.Amount, nil
 }
 
-func (a AssetUseCase) UpdateAmountByUserId(ctx context.Context, userId int, amount int) error {
+func (a AssetUseCase) UpdateAmountByUserId(ctx context.Context, userId int, amount float64) error {
 	asset, err := a.ar.GetByUserId(ctx, userId)
 	if err != nil {
 		return err

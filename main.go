@@ -132,7 +132,7 @@ func main() {
 	plnUseCase := planGormUseCase.NewPlanUseCase(plnRepository)
 	planHandler.NewPlanHttpHandler(e, plnUseCase)
 
-	transRepository := transactionRepository.NewTransactionRepository(db)
+	transRepository := transactionRepository.NewTransactionRepository(db, asstUseCase)
 	transUseCase := transactionUseCase.NewTransactionUseCase(transRepository, usrUseCase, asstUseCase)
 	transactionHandler.NewTransactionHttpHandler(e, transUseCase)
 
