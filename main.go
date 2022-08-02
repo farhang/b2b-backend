@@ -128,13 +128,13 @@ func main() {
 	usrUseCase := userUseCase.NewUserUseCase(usrRepository, asstUseCase)
 	userHttpHandler.NewUserHttpHandler(e, usrUseCase)
 
-	plnRepository := planGormRepository.NewPlanGormRepository(db)
-	plnUseCase := planGormUseCase.NewPlanUseCase(plnRepository)
-	planHandler.NewPlanHttpHandler(e, plnUseCase)
-
 	transRepository := transactionRepository.NewTransactionRepository(db, asstUseCase)
 	transUseCase := transactionUseCase.NewTransactionUseCase(transRepository, usrUseCase, asstUseCase)
 	transactionHandler.NewTransactionHttpHandler(e, transUseCase)
+
+	plnRepository := planGormRepository.NewPlanGormRepository(db)
+	plnUseCase := planGormUseCase.NewPlanUseCase(plnRepository)
+	planHandler.NewPlanHttpHandler(e, plnUseCase)
 
 	athUseCase := authJwtUseCase.NewJwtAuthUseCase(usrUseCase)
 	authJwtHttpHandler.NewAuthHttpHandler(e, athUseCase)

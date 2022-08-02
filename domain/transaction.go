@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
+	"time"
 )
 
 type TransactionType string
@@ -38,6 +39,7 @@ type Transaction struct {
 }
 
 type TransactionResponseDTO struct {
+	CreatedAt       time.Time       `json:"created_at"`
 	Amount          float64         `json:"amount"`
 	TransactionType TransactionType `json:"type"`
 }

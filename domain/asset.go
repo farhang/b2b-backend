@@ -12,6 +12,10 @@ type Asset struct {
 	User   User
 }
 
+type AssetDelivery interface {
+	GetByUserId(ctx context.Context) error
+}
+
 type AssetRepository interface {
 	Store(ctx context.Context, asset Asset) error
 	GetByUserId(ctx context.Context, UserId int) (Asset, error)

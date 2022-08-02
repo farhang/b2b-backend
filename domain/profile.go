@@ -30,15 +30,15 @@ type ProfileResponse struct {
 	MobileNumberCompany string `json:"mobile_number_company"`
 }
 
-type profileHttpHandler interface {
+type ProfileHttpHandler interface {
 	Fetch(ctx echo.Context) error
 	Update(ctx echo.Context) error
 }
 
-type profileUseCase interface {
+type ProfileUseCase interface {
 	Fetch(ctx context.Context) ([]Profile, error)
 }
 
-type profileRepository interface {
+type ProfileRepository interface {
 	Fetch(ctx context.Context) ([]Profile, error)
 }
