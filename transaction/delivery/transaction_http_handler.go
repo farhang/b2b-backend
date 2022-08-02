@@ -23,9 +23,20 @@ type TransactionHttpHandler struct {
 func (t *TransactionHttpHandler) Fetch(ctx echo.Context) error {
 	c := ctx.Request().Context()
 	uid := ctx.Get("userID").(int)
-	transactions, _ := t.tu.FetchByUserId(c, uid)
+	transactions, err := t.tu.FetchByUserId(c, uid)
+	transactionsResponse := make([]domain.TransactionResponseDTO, len(transactions))
+	for i := range transactions {
+		transactionsResponse[i] = domain.TransactionResponseDTO{
+			Amount:          transactions[i].Amount,
+			TransactionType: transactions[i].TransactionType,
+		}
+	}
+
+	if err != nil {
+		return err
+	}
 	return ctx.JSON(http.StatusOK, common.ResponseDTO{
-		Data: transactions,
+		Data: transactionsResponse,
 	})
 }
 

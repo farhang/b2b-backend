@@ -37,6 +37,11 @@ type Transaction struct {
 	UserId          uint
 }
 
+type TransactionResponseDTO struct {
+	Amount          int             `json:"amount"`
+	TransactionType TransactionType `json:"type"`
+}
+
 type DepositRequestDTO struct {
 	UserId int `json:"user_id"`
 	Amount int `json:"amount"`
