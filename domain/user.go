@@ -38,11 +38,11 @@ type UserResponseDTO struct {
 
 type UserUseCase interface {
 	Fetch(ctx context.Context) ([]User, error)
-	Store(ctx context.Context, user StoreUserRequestDTO) error
 	GetById(ctx context.Context, id int) (*User, error)
 	CheckIsUserDuplicatedByEmail(ctx context.Context, email string) bool
 	GeneratePasswordHash(password string) (string, error)
 	ComparePasswordHash(password string, hashedPassword string) bool
+	Register(ctx context.Context, registerDTO RegisterRequestDTO) error
 	GetByEmail(ctx context.Context, email string) (*User, error)
 	VerifyEmail(ctx context.Context, email string) error
 	GenerateVerificationCodeNumber(length int) (int, error)
@@ -54,7 +54,7 @@ type UserUseCase interface {
 
 type UserRepository interface {
 	Fetch(ctx context.Context) ([]User, error)
-	Store(ctx context.Context, user *User) error
+	Register(ctx context.Context, registerDTO RegisterRequestDTO) error
 	GetById(ctx context.Context, id int) (*User, error)
 	GetByEmail(ctx context.Context, email string) (*User, error)
 	StoreEmailVerificationCode(ctx context.Context, emailVerification EmailVerification) error
@@ -65,7 +65,6 @@ type UserRepository interface {
 
 type UserHttpHandler interface {
 	FetchUsers(ctx echo.Context) error
-	Store(ctx echo.Context) error
 	GetById(ctx echo.Context) error
 	GetMe(ctx echo.Context) error
 	VerifyEmail(ctx echo.Context) error

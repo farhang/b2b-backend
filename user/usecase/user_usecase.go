@@ -70,15 +70,8 @@ func (uc *userUseCase) CheckIsUserDuplicatedByEmail(ctx context.Context, email s
 func (uc *userUseCase) Fetch(ctx context.Context) ([]domain.User, error) {
 	return uc.userRepository.Fetch(ctx)
 }
-
-func (uc *userUseCase) Store(ctx context.Context, userDTO domain.StoreUserRequestDTO) error {
-	hashPassword, _ := uc.GeneratePasswordHash(userDTO.Password)
-	user := domain.User{
-		Password: hashPassword,
-		Email:    userDTO.Email,
-	}
-
-	return uc.userRepository.Store(ctx, &user)
+func (uc *userUseCase) Register(ctx context.Context, dto domain.RegisterRequestDTO) error {
+	return uc.userRepository.Register(ctx, dto)
 }
 
 func (uc *userUseCase) GetById(ctx context.Context, id int) (*domain.User, error) {

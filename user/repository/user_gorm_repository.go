@@ -61,7 +61,11 @@ func (ur *UserGormRepository) Fetch(ctx context.Context) ([]domain.User, error) 
 	return users, err
 }
 
-func (ur *UserGormRepository) Store(ctx context.Context, user *domain.User) error {
+func (ur *UserGormRepository) Register(ctx context.Context, registerDTO domain.RegisterRequestDTO) error {
+	var user = &domain.User{
+		Password: registerDTO.Password,
+		Email:    registerDTO.Email,
+	}
 	return ur.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.WithContext(ctx).Create(&user).Error; err != nil {
 			return err
@@ -77,8 +81,14 @@ func (ur *UserGormRepository) Store(ctx context.Context, user *domain.User) erro
 		}
 
 		p := domain.Profile{
-			UserID: user.ID,
-			PlanId: 1,
+			Name:                registerDTO.Name,
+			LastName:            registerDTO.LastName,
+			MobileNumber:        registerDTO.MobileNumber,
+			MobileNumberCompany: registerDTO.MobileNumberCompany,
+			Position:            registerDTO.Position,
+			CompanyName:         registerDTO.CompanyName,
+			UserID:              user.ID,
+			PlanId:              1,
 		}
 
 		if err := tx.WithContext(ctx).Create(&p).Error; err != nil {

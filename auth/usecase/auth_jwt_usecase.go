@@ -21,17 +21,11 @@ func (ac *AuthJwtUseCase) Register(c context.Context, authDTO domain.RegisterReq
 	if err != nil {
 		return err
 	}
-
 	if isUserExist := ac.UserUseCase.CheckIsUserDuplicatedByEmail(c, authDTO.Email); isUserExist {
 		return common.ErrEmailDuplication
 	}
 
-	userDTO := domain.StoreUserRequestDTO{
-		Password: authDTO.Password,
-		Email:    authDTO.Email,
-	}
-
-	return ac.UserUseCase.Store(c, userDTO)
+	return ac.UserUseCase.Register(c, authDTO)
 }
 
 func (ac *AuthJwtUseCase) Login(c context.Context, loginUserDTO domain.LoginRequestDTO) (*string, error) {

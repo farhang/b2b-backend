@@ -77,18 +77,18 @@ func (uh *UserHttpHandler) FetchUsers(c echo.Context) error {
 // @Produce  json
 // @Success  200  {string}  string  "ok"
 // @Router   /users [post]
-func (uh *UserHttpHandler) Store(c echo.Context) error {
-	var ctx = c.Request().Context()
-	user := domain.StoreUserRequestDTO{}
-	err := c.Bind(&user)
-	err = uh.UserUseCase.Store(ctx, user)
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusCreated, "ok")
-}
+//func (uh *UserHttpHandler) Store(c echo.Context) error {
+//	var ctx = c.Request().Context()
+//	user := domain.StoreUserRequestDTO{}
+//	err := c.Bind(&user)
+//	err = uh.UserUseCase.Store(ctx, user)
+//
+//	if err != nil {
+//		return err
+//	}
+//
+//	return c.JSON(http.StatusCreated, "ok")
+//}
 
 func (uh *UserHttpHandler) GetById(ctx echo.Context) error {
 	var c = ctx.Request().Context()
@@ -158,7 +158,7 @@ func NewUserHttpHandler(echo *echo.Echo, userUseCase domain.UserUseCase) domain.
 
 	ug := echo.Group("users", common.AuthMiddleWare())
 	ug.GET("/", handler.FetchUsers)
-	ug.POST("/", handler.Store)
+	//ug.POST("/", handler.Store)
 	ug.GET("/me", handler.GetMe)
 
 	eg := echo.Group("emails/:email/")
