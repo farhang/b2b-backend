@@ -5,7 +5,6 @@ import (
 	"backend-core/domain"
 	"context"
 	"errors"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -63,9 +62,31 @@ func (ur *UserGormRepository) Fetch(ctx context.Context) ([]domain.User, error) 
 }
 
 func (ur *UserGormRepository) Store(ctx context.Context, user *domain.User) error {
-	fmt.Println("run")
-	result := ur.db.WithContext(ctx).Create(&user)
-	return result.Error
+	return ur.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.WithContext(ctx).Create(&user).Error; err != nil {
+			return err
+		}
+
+		asset := domain.Asset{
+			Amount: 0,
+			UserID: int(user.ID),
+		}
+
+		if err := tx.WithContext(ctx).Create(&asset).Error; err != nil {
+			return err
+		}
+
+		p := domain.Profile{
+			UserID: user.ID,
+			PlanId: 1,
+		}
+
+		if err := tx.WithContext(ctx).Create(&p).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
 }
 
 func (ur *UserGormRepository) GetById(ctx context.Context, id int) (*domain.User, error) {

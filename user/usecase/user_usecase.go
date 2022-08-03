@@ -78,17 +78,6 @@ func (uc *userUseCase) Store(ctx context.Context, userDTO domain.StoreUserReques
 		Email:    userDTO.Email,
 	}
 
-	asset := domain.Asset{
-		Amount: 0,
-		User:   user,
-	}
-
-	err := uc.au.Store(ctx, asset)
-
-	if err != nil {
-		return err
-	}
-
 	return uc.userRepository.Store(ctx, &user)
 }
 
