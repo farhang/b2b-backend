@@ -23,8 +23,18 @@ type ProfileHandler struct {
 func (p ProfileHandler) Fetch(ctx echo.Context) error {
 	c := ctx.Request().Context()
 	profiles, _ := p.pu.Fetch(c)
+	var profilesResponse = make([]domain.ProfileResponseDTO, len(profiles))
+	for i := range profiles {
+		profilesResponse[i].UserID = profiles[i].UserID
+		profilesResponse[i].Name = profiles[i].Name
+		profilesResponse[i].LastName = profiles[i].LastName
+		profilesResponse[i].MobileNumber = profiles[i].MobileNumber
+		profilesResponse[i].Position = profiles[i].Position
+		profilesResponse[i].CompanyName = profiles[i].CompanyName
+		profilesResponse[i].MobileNumberCompany = profiles[i].MobileNumberCompany
+	}
 	return ctx.JSON(http.StatusOK, common.ResponseDTO{
-		Data:    profiles,
+		Data:    profilesResponse,
 		Message: http.StatusText(http.StatusOK),
 	})
 }

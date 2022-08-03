@@ -20,7 +20,7 @@ type Profile struct {
 	PlanId              uint
 }
 
-type ProfileResponse struct {
+type ProfileResponseDTO struct {
 	UserID              uint
 	Name                string `json:"name"`
 	LastName            string `json:"last_name"`
