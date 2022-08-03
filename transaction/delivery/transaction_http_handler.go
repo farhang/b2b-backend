@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"strconv"
 )
 
 type TransactionHttpHandler struct {
@@ -125,8 +126,44 @@ func (t *TransactionHttpHandler) Profit(ctx echo.Context) error {
 	})
 }
 
+// FetchTransactionsByUserId godoc
+// @Summary   Get user information
+// @Tags     user
+// @Accept   json
+// @Produce  json
+// @Param    id    path    string                   true  "User id"
+// @Security  ApiKeyAuth
+// @Success  200  {object} common.ResponseDTO
+// @Router    /users/{id}/transactions/ [get]
+func (t *TransactionHttpHandler) FetchTransactionsByUserId(ctx echo.Context) error {
+	c := ctx.Request().Context()
+
+	userId, err := strconv.Atoi(ctx.Param("id"))
+	transactions, err := t.tu.FetchByUserId(c, userId)
+
+	transactionsResponse := make([]domain.TransactionResponseDTO, len(transactions))
+	for i := range transactions {
+		transactionsResponse[i] = domain.TransactionResponseDTO{
+			CreatedAt:       transactions[i].CreatedAt,
+			TransactionType: transactions[i].TransactionType,
+			Amount:          transactions[i].Amount,
+		}
+	}
+
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(http.StatusOK, common.ResponseDTO{
+		Data: transactionsResponse,
+	})
+}
+
 func NewTransactionHttpHandler(e *echo.Echo, tu domain.TransactionUseCase) domain.TransactionHttpHandler {
 	handler := &TransactionHttpHandler{tu}
+
+	ug := e.Group("users")
+	ug.GET("/:id:/transactions/", handler.FetchTransactionsByUserId)
+
 	tg := e.Group("transactions")
 	tg.GET("/", handler.Fetch, common.AuthMiddleWare())
 	tg.POST("/deposit", handler.Deposit)

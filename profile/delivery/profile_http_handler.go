@@ -13,6 +13,46 @@ type ProfileHandler struct {
 	pu domain.ProfileUseCase
 }
 
+// GetById godoc
+// @Summary   get profile by id
+// @Tags     profiles
+// @Accept   json
+// @Produce  json
+// @Security  ApiKeyAuth
+// @Param    id  path      int                        true  "Profile id"
+// @Success  200  {object} common.ResponseDTO
+// @Router    /profiles/{id}/ [get]
+func (ph ProfileHandler) GetById(ctx echo.Context) error {
+	c := ctx.Request().Context()
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	p, err := ph.pu.GetById(c, id)
+
+	profileResponse := domain.ProfileResponseDTO{
+		ID:                  p.ID,
+		UserID:              p.UserID,
+		PlanId:              p.PlanId,
+		Name:                p.Name,
+		LastName:            p.LastName,
+		MobileNumber:        p.MobileNumber,
+		Position:            p.Position,
+		CompanyName:         p.CompanyName,
+		MobileNumberCompany: p.MobileNumberCompany,
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(http.StatusOK, common.ResponseDTO{
+		Data:    profileResponse,
+		Message: http.StatusText(http.StatusOK),
+	})
+}
+
 // Fetch godoc
 // @Summary   get profiles
 // @Tags     profiles
@@ -74,5 +114,6 @@ func NewProfileHttpHandler(e *echo.Echo, pu domain.ProfileUseCase) domain.Profil
 	handler := &ProfileHandler{e, pu}
 	e.GET("/profiles/", handler.Fetch)
 	e.PUT("/profiles/:id/", handler.Update)
+	e.GET("/profiles/:id/", handler.GetById)
 	return handler
 }

@@ -45,11 +45,13 @@ type ProfileResponseDTO struct {
 type ProfileDelivery interface {
 	Fetch(ctx echo.Context) error
 	Update(ctx echo.Context) error
+	GetById(ctx echo.Context) error
 }
 
 type ProfileUseCase interface {
 	Fetch(ctx context.Context) ([]Profile, error)
 	Store(ctx context.Context, profile Profile) error
+	GetById(ctx context.Context, id int) (Profile, error)
 	Update(ctx context.Context, profile UpdateProfileRequestDTO, id int) error
 }
 

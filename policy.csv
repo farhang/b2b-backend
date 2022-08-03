@@ -1,0 +1,2 @@
+p, admin, /transactions/*, *
+p, member, /transactions/*,
