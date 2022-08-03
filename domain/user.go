@@ -53,7 +53,7 @@ type UserUseCase interface {
 
 type UserRepository interface {
 	Fetch(ctx context.Context) ([]User, error)
-	Store(ctx context.Context, user User) error
+	Store(ctx context.Context, user *User) error
 	GetById(ctx context.Context, id int) (*User, error)
 	GetByEmail(ctx context.Context, email string) (*User, error)
 	StoreEmailVerificationCode(ctx context.Context, emailVerification EmailVerification) error

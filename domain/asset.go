@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
@@ -11,9 +12,13 @@ type Asset struct {
 	UserID int
 	User   User
 }
+type AssetResponseDTO struct {
+	Amount      float64 `json:"amount"`
+	TotalProfit float64 `json:"total_profit"`
+}
 
 type AssetDelivery interface {
-	GetByUserId(ctx context.Context) error
+	GetByUserId(ctx echo.Context) error
 }
 
 type AssetRepository interface {

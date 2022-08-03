@@ -156,7 +156,7 @@ func NewUserHttpHandler(echo *echo.Echo, userUseCase domain.UserUseCase) domain.
 		UserUseCase: userUseCase,
 	}
 
-	ug := echo.Group("users")
+	ug := echo.Group("users", common.AuthMiddleWare())
 	ug.GET("/", handler.FetchUsers)
 	ug.POST("/", handler.Store)
 	ug.GET("/me", handler.GetMe)

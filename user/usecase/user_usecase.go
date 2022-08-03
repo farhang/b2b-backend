@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 	"strconv"
 	"time"
 )
@@ -14,6 +15,8 @@ import (
 type userUseCase struct {
 	userRepository domain.UserRepository
 	au             domain.AssetUseCase
+	pu             domain.ProfileUseCase
+	db             *gorm.DB
 }
 
 func (uc *userUseCase) GetLatestEmailVerification(ctx context.Context, email string) (*domain.EmailVerification, error) {
@@ -75,18 +78,26 @@ func (uc *userUseCase) Store(ctx context.Context, userDTO domain.StoreUserReques
 		Email:    userDTO.Email,
 	}
 
-	asset := domain.Asset{
-		Amount: 0,
-		User:   user,
-	}
+	return uc.db.Transaction(func(tx *gorm.DB) error {
+		if err := uc.userRepository.Store(ctx, &user); err != nil {
+			return err
+		}
 
-	err := uc.au.Store(ctx, asset)
+		asset := domain.Asset{
+			Amount: 0,
+			UserID: int(user.ID),
+		}
 
-	if err != nil {
-		return err
-	}
+		if err := uc.au.Store(ctx, asset); err != nil {
+			return err
+		}
 
-	return uc.userRepository.Store(ctx, user)
+		if err := uc.pu.StoreEmptyProfileByUserId(ctx, int(user.ID)); err != nil {
+			return err
+		}
+
+		return nil
+	})
 }
 
 func (uc *userUseCase) GetById(ctx context.Context, id int) (*domain.User, error) {
@@ -111,9 +122,11 @@ func (uc *userUseCase) IsEmailVerified(c context.Context, email string) bool {
 	return user.IsEmailVerified
 }
 
-func NewUserUseCase(userRepository domain.UserRepository, au domain.AssetUseCase) domain.UserUseCase {
+func NewUserUseCase(userRepository domain.UserRepository, au domain.AssetUseCase, pu domain.ProfileUseCase, db *gorm.DB) domain.UserUseCase {
 	return &userUseCase{
 		userRepository,
 		au,
+		pu,
+		db,
 	}
 }

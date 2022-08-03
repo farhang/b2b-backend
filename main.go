@@ -1,7 +1,8 @@
 package main
 
 import (
-	assetReposiporty "backend-core/asset/repository"
+	assetHandler "backend-core/asset/delivery"
+	assetRepository "backend-core/asset/repository"
 	assetUseCase "backend-core/asset/usecase"
 	authJwtHttpHandler "backend-core/auth/delivery"
 	authJwtUseCase "backend-core/auth/usecase"
@@ -11,6 +12,9 @@ import (
 	planHandler "backend-core/plan/delivery"
 	planGormRepository "backend-core/plan/repository"
 	planGormUseCase "backend-core/plan/usecase"
+	profileUseHandler "backend-core/profile/delivery"
+	profileRepository "backend-core/profile/repository"
+	profileUseCase "backend-core/profile/usecase"
 	transactionHandler "backend-core/transaction/delivery"
 	transactionRepository "backend-core/transaction/repository"
 	transactionUseCase "backend-core/transaction/usecase"
@@ -132,22 +136,25 @@ func main() {
 	docs.SwaggerInfo.Host = os.Getenv("BASE_URL")
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	asstRepository := assetReposiporty.NewAssetRepository(db)
-	asstUseCase := assetUseCase.NewAssetUseCase(asstRepository)
-
+	profRepository := profileRepository.NewProfileRepository(db)
+	asstRepository := assetRepository.NewAssetRepository(db)
 	usrRepository := userGormRepository.NewGormUserRepository(db)
-	usrUseCase := userUseCase.NewUserUseCase(usrRepository, asstUseCase)
-	userHttpHandler.NewUserHttpHandler(e, usrUseCase)
-
-	transRepository := transactionRepository.NewTransactionRepository(db, asstUseCase)
-	transUseCase := transactionUseCase.NewTransactionUseCase(transRepository, usrUseCase, asstUseCase)
-	transactionHandler.NewTransactionHttpHandler(e, transUseCase)
-
+	transRepository := transactionRepository.NewTransactionRepository(db)
 	plnRepository := planGormRepository.NewPlanGormRepository(db)
+	profUseCase := profileUseCase.NewProfileUseCase(profRepository)
+	profileUseHandler.NewProfileHttpHandler(e, profUseCase)
+	asstUseCase := assetUseCase.NewAssetUseCase(asstRepository)
+	usrUseCase := userUseCase.NewUserUseCase(usrRepository, asstUseCase, profUseCase, db)
+	userHttpHandler.NewUserHttpHandler(e, usrUseCase)
+	transUseCase := transactionUseCase.NewTransactionUseCase(transRepository, usrUseCase, asstUseCase, db)
+	transactionHandler.NewTransactionHttpHandler(e, transUseCase)
+	assetHandler.NewAssetHttpHandler(e, asstUseCase, transUseCase)
+
 	plnUseCase := planGormUseCase.NewPlanUseCase(plnRepository)
 	planHandler.NewPlanHttpHandler(e, plnUseCase)
 
 	athUseCase := authJwtUseCase.NewJwtAuthUseCase(usrUseCase)
 	authJwtHttpHandler.NewAuthHttpHandler(e, athUseCase)
+
 	e.Logger.Fatal(e.Start(":8080"))
 }

@@ -3,12 +3,14 @@ package usecase
 import (
 	"backend-core/domain"
 	"context"
+	"gorm.io/gorm"
 )
 
 type TransactionUseCase struct {
 	tr domain.TransactionRepository
 	uu domain.UserUseCase
 	au domain.AssetUseCase
+	db *gorm.DB
 }
 
 func (t TransactionUseCase) GetTotalProfitByUserId(ctx context.Context, userId int) (float64, error) {
@@ -36,7 +38,17 @@ func (t TransactionUseCase) Deposit(ctx context.Context, deposit domain.DepositR
 		User:            *user,
 	}
 
-	return t.tr.Deposit(ctx, tr, int(user.ID))
+	return t.db.Transaction(func(tx *gorm.DB) error {
+		if err := t.au.IncreaseAmount(ctx, int(user.ID), tr.Amount); err != nil {
+			return err
+		}
+
+		if err := t.tr.Store(ctx, tr); err != nil {
+			return err
+		}
+
+		return nil
+	})
 
 }
 
@@ -82,6 +94,6 @@ func (t TransactionUseCase) Profit(ctx context.Context, profit domain.ProfitRequ
 	return t.tr.Store(ctx, tr)
 }
 
-func NewTransactionUseCase(tr domain.TransactionRepository, uu domain.UserUseCase, au domain.AssetUseCase) domain.TransactionUseCase {
-	return &TransactionUseCase{tr, uu, au}
+func NewTransactionUseCase(tr domain.TransactionRepository, uu domain.UserUseCase, au domain.AssetUseCase, db *gorm.DB) domain.TransactionUseCase {
+	return &TransactionUseCase{tr, uu, au, db}
 }

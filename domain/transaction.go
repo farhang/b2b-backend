@@ -80,5 +80,4 @@ type TransactionRepository interface {
 	Fetch(ctx context.Context) ([]Transaction, error)
 	FetchByUserId(ctx context.Context, userId int) ([]Transaction, error)
 	GetTotalProfitByUserId(ctx context.Context, userId int) (float64, error)
-	Deposit(ctx context.Context, transaction Transaction, userId int) error
 }

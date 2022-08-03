@@ -5,6 +5,7 @@ import (
 	"backend-core/domain"
 	"context"
 	"errors"
+	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -61,7 +62,8 @@ func (ur *UserGormRepository) Fetch(ctx context.Context) ([]domain.User, error) 
 	return users, err
 }
 
-func (ur *UserGormRepository) Store(ctx context.Context, user domain.User) error {
+func (ur *UserGormRepository) Store(ctx context.Context, user *domain.User) error {
+	fmt.Println("run")
 	result := ur.db.WithContext(ctx).Create(&user)
 	return result.Error
 }
