@@ -21,10 +21,12 @@ import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/swaggo/echo-swagger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	"log/syslog"
 	"net/http"
 	"os"
 )
@@ -89,6 +91,11 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 // @name                        Authorization
 // @description                 Description for what is this security definition being used
 func main() {
+	w, err := syslog.Dial("udp", "logs5.papertrailapp.com:19181", syslog.LOG_EMERG|syslog.LOG_KERN, "myapp")
+
+	if err != nil {
+		log.Fatal("failed to dial syslog")
+	}
 	config := DBConfig{
 		Engine:   os.Getenv("DB_DRIVER"),
 		Host:     os.Getenv("DB_HOST"),
@@ -117,6 +124,10 @@ func main() {
 	e := echo.New()
 	e.HTTPErrorHandler = customHTTPErrorHandler
 	e.Use(common.CORSMiddleWare())
+
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Output: w,
+	}))
 
 	docs.SwaggerInfo.Host = os.Getenv("BASE_URL")
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
