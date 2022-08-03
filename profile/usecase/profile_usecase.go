@@ -9,27 +9,31 @@ type ProfileUseCase struct {
 	pr domain.ProfileRepository
 }
 
-func (p ProfileUseCase) Store(ctx context.Context, profile domain.Profile) error {
+func (pu ProfileUseCase) Update(ctx context.Context, profile domain.UpdateProfileRequestDTO, id int) error {
+	p, _ := pu.pr.GetById(ctx, id)
+
+	p.Name = profile.Name
+	p.LastName = profile.LastName
+	p.MobileNumber = profile.MobileNumber
+	p.MobileNumberCompany = profile.MobileNumberCompany
+	p.Position = profile.Position
+	p.PlanId = uint(profile.PlanId)
+	p.CompanyName = profile.CompanyName
+
+	return pu.pr.Update(ctx, p)
+}
+
+func (pu ProfileUseCase) GetById(ctx context.Context, id int) (domain.Profile, error) {
+	return pu.pr.GetById(ctx, id)
+}
+
+func (pu ProfileUseCase) Store(ctx context.Context, profile domain.Profile) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (p ProfileUseCase) StoreEmptyProfileByUserId(ctx context.Context, userId int) error {
-	ep := domain.Profile{
-		Name:                "",
-		LastName:            "",
-		MobileNumber:        "",
-		MobileNumberCompany: "",
-		Position:            "",
-		CompanyName:         "",
-		UserID:              uint(userId),
-		PlanId:              1,
-	}
-	return p.pr.Store(ctx, ep)
-}
-
-func (p ProfileUseCase) Fetch(ctx context.Context) ([]domain.Profile, error) {
-	return p.pr.Fetch(ctx)
+func (pu ProfileUseCase) Fetch(ctx context.Context) ([]domain.Profile, error) {
+	return pu.pr.Fetch(ctx)
 }
 
 func NewProfileUseCase(pr domain.ProfileRepository) domain.ProfileUseCase {

@@ -4,10 +4,23 @@ import (
 	"backend-core/domain"
 	"context"
 	"gorm.io/gorm"
+	"log"
 )
 
 type ProfileRepository struct {
 	db *gorm.DB
+}
+
+func (p ProfileRepository) Update(ctx context.Context, profile domain.Profile) error {
+	log.Println(profile.ID)
+	return p.db.WithContext(ctx).Omit("user_id").Save(&profile).Error
+}
+
+func (p ProfileRepository) GetById(ctx context.Context, id int) (domain.Profile, error) {
+	var profile domain.Profile
+	log.Println("profileId", profile.ID)
+	err := p.db.WithContext(ctx).First(&profile, id).Error
+	return profile, err
 }
 
 func (p ProfileRepository) Store(ctx context.Context, profile domain.Profile) error {

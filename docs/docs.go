@@ -305,6 +305,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/profiles/{id}/": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "profiles"
+                ],
+                "summary": "update profile",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Profile id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Profile",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UpdateProfileRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Email verification code",
+                        "schema": {
+                            "$ref": "#/definitions/common.ResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
         "/transactions/": {
             "get": {
                 "security": [
@@ -601,13 +641,31 @@ const docTemplate = `{
                 "email"
             ],
             "properties": {
+                "company_name": {
+                    "type": "string"
+                },
                 "confirm_password": {
                     "type": "string"
                 },
                 "email": {
                     "type": "string"
                 },
+                "last_name": {
+                    "type": "string"
+                },
+                "mobile_number": {
+                    "type": "string"
+                },
+                "mobile_number_company": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
                 "password": {
+                    "type": "string"
+                },
+                "position": {
                     "type": "string"
                 }
             }
@@ -627,6 +685,32 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.UpdateProfileRequestDTO": {
+            "type": "object",
+            "properties": {
+                "company_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "mobile_number": {
+                    "type": "string"
+                },
+                "mobile_number_company": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "plan_id": {
+                    "type": "integer"
+                },
+                "position": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.UserResponseDTO": {
             "type": "object",
             "properties": {
@@ -635,6 +719,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "role": {
+                    "type": "string"
                 }
             }
         },

@@ -20,9 +20,15 @@ type LoginResponseDTO struct {
 }
 
 type RegisterRequestDTO struct {
-	Email           string `json:"email" validate:"required,email"`
-	Password        string `json:"password"`
-	ConfirmPassword string `json:"confirm_password" validate:"required"`
+	Name                string `json:"name"`
+	LastName            string `json:"last_name"`
+	Email               string `json:"email" validate:"required,email"`
+	Password            string `json:"password"`
+	ConfirmPassword     string `json:"confirm_password" validate:"required"`
+	MobileNumber        string `json:"mobile_number"`
+	MobileNumberCompany string `json:"mobile_number_company"`
+	Position            string `json:"position"`
+	CompanyName         string `json:"company_name"`
 }
 
 type ResetPasswordRequestDTO struct {
