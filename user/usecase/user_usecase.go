@@ -78,26 +78,18 @@ func (uc *userUseCase) Store(ctx context.Context, userDTO domain.StoreUserReques
 		Email:    userDTO.Email,
 	}
 
-	return uc.db.Transaction(func(tx *gorm.DB) error {
-		if err := uc.userRepository.Store(ctx, &user); err != nil {
-			return err
-		}
+	asset := domain.Asset{
+		Amount: 0,
+		User:   user,
+	}
 
-		asset := domain.Asset{
-			Amount: 0,
-			UserID: int(user.ID),
-		}
+	err := uc.au.Store(ctx, asset)
 
-		if err := uc.au.Store(ctx, asset); err != nil {
-			return err
-		}
+	if err != nil {
+		return err
+	}
 
-		if err := uc.pu.StoreEmptyProfileByUserId(ctx, int(user.ID)); err != nil {
-			return err
-		}
-
-		return nil
-	})
+	return uc.userRepository.Store(ctx, &user)
 }
 
 func (uc *userUseCase) GetById(ctx context.Context, id int) (*domain.User, error) {
