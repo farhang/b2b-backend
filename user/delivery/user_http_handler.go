@@ -53,7 +53,7 @@ func (uh *UserHttpHandler) VerifyEmail(ctx echo.Context) error {
 // @Accept   json
 // @Produce  json
 // @Success   200  {string}  string  "ok"
-// @Router   /users [post]
+// @Router   /users/ [get]
 func (uh *UserHttpHandler) FetchUsers(c echo.Context) error {
 
 	var ctx = c.Request().Context()
@@ -156,7 +156,7 @@ func NewUserHttpHandler(echo *echo.Echo, userUseCase domain.UserUseCase) domain.
 		UserUseCase: userUseCase,
 	}
 
-	ug := echo.Group("users", common.AuthMiddleWare())
+	ug := echo.Group("users")
 	ug.GET("/", handler.FetchUsers)
 	ug.POST("/", handler.Store)
 	ug.GET("/me", handler.GetMe)

@@ -27,11 +27,8 @@ func (ac *AuthJwtUseCase) Register(c context.Context, authDTO domain.RegisterReq
 	}
 
 	userDTO := domain.StoreUserRequestDTO{
-		FirstName:    "",
-		LastName:     "",
-		Password:     authDTO.Password,
-		Email:        authDTO.Email,
-		MobileNumber: "",
+		Password: authDTO.Password,
+		Email:    authDTO.Email,
 	}
 
 	return ac.UserUseCase.Store(c, userDTO)

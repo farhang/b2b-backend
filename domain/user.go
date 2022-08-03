@@ -26,19 +26,13 @@ type VerifyRequestDTO struct {
 }
 
 type StoreUserRequestDTO struct {
-	FirstName    string `json:"first_name"`
-	LastName     string `json:"last_name"`
-	Password     string `json:"password"`
-	Email        string `json:"email"`
-	MobileNumber string `json:"mobile_number"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
 }
 
 type UserResponseDTO struct {
-	ID           uint   `json:"id"`
-	FirstName    string `json:"first_name"`
-	LastName     string `json:"last_name"`
-	Email        string `json:"email"`
-	MobileNumber string `json:"mobile_number"`
+	ID    uint   `json:"id"`
+	Email string `json:"email"`
 }
 
 type UserUseCase interface {
