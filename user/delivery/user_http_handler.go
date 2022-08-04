@@ -15,7 +15,7 @@ type UserHttpHandler struct {
 
 // VerifyEmail godoc
 // @Summary  Send verification code to user
-// @Tags      emails
+// @Tags      email
 // @Accept    json
 // @Produce   json
 // @Param    email    path    string                   true  "User email"
@@ -53,6 +53,7 @@ func (uh *UserHttpHandler) VerifyEmail(ctx echo.Context) error {
 // @Accept   json
 // @Produce  json
 // @Success   200  {string}  string  "ok"
+// @Security  ApiKeyAuth
 // @Router   /users/ [get]
 func (uh *UserHttpHandler) FetchUsers(c echo.Context) error {
 
@@ -127,7 +128,7 @@ func (uh *UserHttpHandler) GetMe(ctx echo.Context) error {
 
 // SendEmailVerificationCode godoc
 // @Summary  Send verification code to user
-// @Tags     emails
+// @Tags     email
 // @Accept   json
 // @Produce  json
 // @Param    email  path      string                        true  "User email"
@@ -156,7 +157,7 @@ func NewUserHttpHandler(echo *echo.Echo, userUseCase domain.UserUseCase) domain.
 		UserUseCase: userUseCase,
 	}
 
-	ug := echo.Group("users", common.AuthMiddleWare())
+	ug := echo.Group("users", common.AuthMiddleWare(), common.CASBINMiddleWare())
 	ug.GET("/", handler.FetchUsers)
 	//ug.POST("/", handler.Store)
 	ug.GET("/me", handler.GetMe)

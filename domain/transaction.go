@@ -61,13 +61,14 @@ type ProfitRequestDTO struct {
 
 type TransactionHttpHandler interface {
 	Fetch(ctx echo.Context) error
+	MyTransactions(ctx echo.Context) error
 	Deposit(ctx echo.Context) error
 	WithDraw(ctx echo.Context) error
 	Profit(ctx echo.Context) error
 }
 
 type TransactionUseCase interface {
-	Fetch(ctx context.Context) error
+	Fetch(ctx context.Context) ([]Transaction, error)
 	FetchByUserId(ctx context.Context, userId int) ([]Transaction, error)
 	Deposit(ctx context.Context, deposit DepositRequestDTO) error
 	WithDraw(ctx context.Context, withdraw WithDrawRequestDTO) error

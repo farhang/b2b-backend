@@ -26,8 +26,9 @@ func (t TransactionRepository) GetTotalProfitByUserId(ctx context.Context, userI
 }
 
 func (t TransactionRepository) Fetch(ctx context.Context) ([]domain.Transaction, error) {
-	//TODO implement me
-	panic("implement me")
+	var transactions []domain.Transaction
+	err := t.db.WithContext(ctx).Find(&transactions).Error
+	return transactions, err
 }
 
 func NewTransactionRepository(db *gorm.DB) domain.TransactionRepository {

@@ -65,6 +65,7 @@ func (ur *UserGormRepository) Register(ctx context.Context, registerDTO domain.R
 	var user = &domain.User{
 		Password: registerDTO.Password,
 		Email:    registerDTO.Email,
+		Role:     domain.MEMBER,
 	}
 	return ur.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.WithContext(ctx).Create(&user).Error; err != nil {
@@ -112,5 +113,6 @@ func (ur *UserGormRepository) GetById(ctx context.Context, id int) (*domain.User
 }
 
 func NewGormUserRepository(db *gorm.DB) domain.UserRepository {
+	db.Exec("DROP TYPE IF EXISTS role;CREATE TYPE role AS ENUM ('ADMIN', 'MEMBER');")
 	return &UserGormRepository{db}
 }

@@ -21,9 +21,8 @@ func (t TransactionUseCase) FetchByUserId(ctx context.Context, userId int) ([]do
 	return t.tr.FetchByUserId(ctx, userId)
 }
 
-func (t TransactionUseCase) Fetch(ctx context.Context) error {
-
-	panic("implement me")
+func (t TransactionUseCase) Fetch(ctx context.Context) ([]domain.Transaction, error) {
+	return t.tr.Fetch(ctx)
 }
 
 func (t TransactionUseCase) Deposit(ctx context.Context, deposit domain.DepositRequestDTO) error {

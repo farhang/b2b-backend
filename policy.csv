@@ -1,2 +1,3 @@
-p, admin, /transactions/*, *
-p, member, /transactions/*,
+p, ADMIN, /* , *
+p, MEMBER, /transactions/me* , *
+p, MEMBER, /users/me* , *

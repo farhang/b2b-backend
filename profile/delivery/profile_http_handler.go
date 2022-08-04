@@ -15,7 +15,7 @@ type ProfileHandler struct {
 
 // GetById godoc
 // @Summary   get profile by id
-// @Tags     profiles
+// @Tags     profile
 // @Accept   json
 // @Produce  json
 // @Security  ApiKeyAuth
@@ -55,7 +55,7 @@ func (ph ProfileHandler) GetById(ctx echo.Context) error {
 
 // Fetch godoc
 // @Summary   get profiles
-// @Tags     profiles
+// @Tags     profile
 // @Accept   json
 // @Produce  json
 // @Security  ApiKeyAuth
@@ -86,7 +86,7 @@ func (ph ProfileHandler) Fetch(ctx echo.Context) error {
 
 // Update godoc
 // @Summary  update profile
-// @Tags     profiles
+// @Tags     profile
 // @Accept   json
 // @Produce  json
 // @Param    id  path      int                        true  "Profile id"

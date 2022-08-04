@@ -39,6 +39,7 @@ type ResetPasswordRequestDTO struct {
 type JwtCustomClaims struct {
 	jwt.StandardClaims
 	UserId int
+	Role   string
 }
 
 type AuthHttpHandler interface {

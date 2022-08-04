@@ -14,6 +14,7 @@ type PlanHttpHandler struct {
 // Fetch godoc
 // @Summary  Get plans
 // @Tags     plan
+// @Security  ApiKeyAuth
 // @Accept   json
 // @Produce  json
 // @Success   200  {string}  string  "ok"
@@ -43,6 +44,7 @@ func (ph *PlanHttpHandler) Fetch(ctx echo.Context) error {
 // @Tags     plan
 // @Accept   json
 // @Produce  json
+// @Security  ApiKeyAuth
 // @Param    message  body      domain.PlanStoreRequestDTO true  "User credentials"
 // @success  200      {object}  common.ResponseDTO "Login response model including access token"
 // @Router   /plans/ [post]
@@ -71,7 +73,7 @@ func (ph *PlanHttpHandler) Delete(ctx echo.Context) error {
 
 func NewPlanHttpHandler(e *echo.Echo, pu domain.PlanUseCase) domain.PlanHttpHandler {
 	handler := &PlanHttpHandler{pu}
-	pg := e.Group("/plans")
+	pg := e.Group("/plans", common.AuthMiddleWare(), common.CASBINMiddleWare())
 	pg.POST("/", handler.Store)
 	pg.GET("/", handler.Fetch)
 

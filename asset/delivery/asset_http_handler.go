@@ -15,7 +15,7 @@ type assetHttpHandler struct {
 
 // GetByUserId
 // @Summary   Get user information
-// @Tags     assets
+// @Tags     asset
 // @Accept   json
 // @Produce  json
 // @Security  ApiKeyAuth

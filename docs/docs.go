@@ -30,7 +30,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "assets"
+                    "asset"
                 ],
                 "summary": "Get user information",
                 "responses": {
@@ -151,7 +151,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "emails"
+                    "email"
                 ],
                 "summary": "Send verification code to user",
                 "parameters": [
@@ -194,7 +194,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "emails"
+                    "email"
                 ],
                 "summary": "Send verification code to user",
                 "parameters": [
@@ -227,6 +227,11 @@ const docTemplate = `{
         },
         "/plans/": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -247,6 +252,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -292,7 +302,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "profiles"
+                    "profile"
                 ],
                 "summary": "get profiles",
                 "responses": {
@@ -319,7 +329,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "profiles"
+                    "profile"
                 ],
                 "summary": "get profile by id",
                 "parameters": [
@@ -348,7 +358,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "profiles"
+                    "profile"
                 ],
                 "summary": "update profile",
                 "parameters": [
@@ -408,6 +418,11 @@ const docTemplate = `{
         },
         "/transactions/deposit": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -439,8 +454,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/transactions/me": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transaction"
+                ],
+                "summary": "Get user information",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.ResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
         "/transactions/profit": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -474,6 +521,11 @@ const docTemplate = `{
         },
         "/transactions/withdraw": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -507,6 +559,11 @@ const docTemplate = `{
         },
         "/users/": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -767,9 +824,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
-                },
-                "role": {
-                    "type": "string"
                 }
             }
         },

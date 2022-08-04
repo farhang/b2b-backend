@@ -2,16 +2,34 @@ package domain
 
 import (
 	"context"
+	"database/sql/driver"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 	"time"
 )
+
+type Role string
+
+const (
+	ADMIN  Role = "ADMIN"
+	MEMBER Role = "MEMBER"
+)
+
+func (tt *Role) Scan(value interface{}) error {
+	*tt = Role(value.(string))
+	return nil
+}
+
+func (tt Role) Value() (driver.Value, error) {
+	return string(tt), nil
+}
 
 type User struct {
 	gorm.Model
 	Password        string
 	Email           string
 	IsEmailVerified bool
+	Role            Role `sql:"role"`
 }
 
 type EmailVerification struct {
@@ -33,7 +51,6 @@ type StoreUserRequestDTO struct {
 type UserResponseDTO struct {
 	ID    uint   `json:"id"`
 	Email string `json:"email"`
-	Role  string `json:"role"`
 }
 
 type UserUseCase interface {

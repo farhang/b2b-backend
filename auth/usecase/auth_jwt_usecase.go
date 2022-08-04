@@ -25,6 +25,8 @@ func (ac *AuthJwtUseCase) Register(c context.Context, authDTO domain.RegisterReq
 		return common.ErrEmailDuplication
 	}
 
+	authDTO.Password, _ = ac.UserUseCase.GeneratePasswordHash(authDTO.Password)
+
 	return ac.UserUseCase.Register(c, authDTO)
 }
 
@@ -46,7 +48,7 @@ func (ac *AuthJwtUseCase) Login(c context.Context, loginUserDTO domain.LoginRequ
 		return nil, common.ErrEmailIsNotVerified
 	}
 
-	token, _ := ac.GenerateToken(domain.JwtCustomClaims{UserId: int(user.ID)})
+	token, _ := ac.GenerateToken(domain.JwtCustomClaims{UserId: int(user.ID), Role: string(user.Role)})
 	return &token, nil
 
 }
