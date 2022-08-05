@@ -15,10 +15,10 @@ type Plan struct {
 }
 
 type PlanStoreRequestDTO struct {
-	Title         string
-	Description   string
-	ProfitPercent int
-	Duration      int
+	Title         string `json:"title"`
+	Description   string `json:"description"`
+	ProfitPercent int    `json:"profit_percent"`
+	Duration      int    `json:"duration"`
 }
 type PlanResponseDTO struct {
 	ID            uint   `json:"id"`

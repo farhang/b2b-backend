@@ -27,6 +27,7 @@ func (ph *PlanHttpHandler) Fetch(ctx echo.Context) error {
 		plansResponse[i].ID = plans[i].ID
 		plansResponse[i].Title = plans[i].Title
 		plansResponse[i].Duration = plans[i].Duration
+		plansResponse[i].Description = plans[i].Description
 		plansResponse[i].ProfitPercent = plans[i].ProfitPercent
 	}
 
@@ -79,3 +80,5 @@ func NewPlanHttpHandler(e *echo.Echo, pu domain.PlanUseCase) domain.PlanHttpHand
 
 	return handler
 }
+
+/**/

@@ -159,7 +159,6 @@ func NewUserHttpHandler(echo *echo.Echo, userUseCase domain.UserUseCase) domain.
 
 	ug := echo.Group("users", common.AuthMiddleWare(), common.CASBINMiddleWare())
 	ug.GET("/", handler.FetchUsers)
-	//ug.POST("/", handler.Store)
 	ug.GET("/me", handler.GetMe)
 
 	eg := echo.Group("emails/:email/")

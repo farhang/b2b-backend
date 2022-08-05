@@ -53,6 +53,41 @@ func (ph ProfileHandler) GetById(ctx echo.Context) error {
 	})
 }
 
+// GetMyProfile godoc
+// @Summary   get my profile
+// @Tags     profile
+// @Accept   json
+// @Produce  json
+// @Security  ApiKeyAuth
+// @Success  200  {object} common.ResponseDTO
+// @Router    /profiles/me/ [get]
+func (ph ProfileHandler) GetMyProfile(ctx echo.Context) error {
+	var c = ctx.Request().Context()
+	id := ctx.Get("userID").(int)
+	p, err := ph.pu.GetByUserId(c, id)
+
+	if err != nil {
+		return err
+	}
+
+	pr := domain.ProfileResponseDTO{
+		ID:                  p.ID,
+		UserID:              p.UserID,
+		PlanId:              p.PlanId,
+		Name:                p.Name,
+		LastName:            p.LastName,
+		MobileNumber:        p.MobileNumber,
+		Position:            p.Position,
+		CompanyName:         p.CompanyName,
+		MobileNumberCompany: p.MobileNumberCompany,
+	}
+
+	return ctx.JSON(http.StatusOK, common.ResponseDTO{
+		Data:    pr,
+		Message: http.StatusText(http.StatusOK),
+	})
+}
+
 // Fetch godoc
 // @Summary   get profiles
 // @Tags     profile
@@ -112,8 +147,10 @@ func (ph ProfileHandler) Update(ctx echo.Context) error {
 
 func NewProfileHttpHandler(e *echo.Echo, pu domain.ProfileUseCase) domain.ProfileDelivery {
 	handler := &ProfileHandler{e, pu}
-	e.GET("/profiles/", handler.Fetch)
-	e.PUT("/profiles/:id/", handler.Update)
-	e.GET("/profiles/:id/", handler.GetById)
+	pg := e.Group("profiles", common.AuthMiddleWare())
+	pg.GET("/", handler.Fetch)
+	pg.GET("/me/", handler.GetMyProfile)
+	pg.PUT("/:id/", handler.Update)
+	pg.GET("/:id/", handler.GetById)
 	return handler
 }

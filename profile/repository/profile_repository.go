@@ -11,8 +11,13 @@ type ProfileRepository struct {
 	db *gorm.DB
 }
 
+func (p ProfileRepository) GetByUserId(ctx context.Context, id int) (domain.Profile, error) {
+	var pr domain.Profile
+	err := p.db.WithContext(ctx).Where(domain.Profile{UserID: uint(id)}).First(&pr).Error
+	return pr, err
+}
+
 func (p ProfileRepository) Update(ctx context.Context, profile domain.Profile) error {
-	log.Println(profile.ID)
 	return p.db.WithContext(ctx).Omit("user_id").Save(&profile).Error
 }
 

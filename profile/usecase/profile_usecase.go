@@ -9,6 +9,10 @@ type ProfileUseCase struct {
 	pr domain.ProfileRepository
 }
 
+func (pu ProfileUseCase) GetByUserId(ctx context.Context, id int) (domain.Profile, error) {
+	return pu.pr.GetByUserId(ctx, id)
+}
+
 func (pu ProfileUseCase) Update(ctx context.Context, profile domain.UpdateProfileRequestDTO, id int) error {
 	p, _ := pu.pr.GetById(ctx, id)
 
