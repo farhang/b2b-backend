@@ -18,7 +18,7 @@ func (p PlanGormRepository) GetByUserId(ctx context.Context, id int) (domain.Pla
 	if err != nil {
 		return domain.Plan{}, err
 	}
-	err = p.db.WithContext(ctx).First(&pl, 1).Error
+	err = p.db.WithContext(ctx).Where(domain.Plan{}, pr.UserID).First(&pl).Error
 
 	if err != nil {
 		return pl, nil
