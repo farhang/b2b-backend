@@ -32,7 +32,7 @@ type RegisterRequestDTO struct {
 }
 
 type ResetPasswordRequestDTO struct {
-	Email    string `json:"email" validate:"required,email"`
+	UserID   int    `json:"user_id" validate:"required"`
 	Password string `json:"password" validate:"required,email"`
 }
 
@@ -51,5 +51,5 @@ type AuthUseCase interface {
 	Login(c context.Context, loginUserDTO LoginRequestDTO) (*string, error)
 	Register(c context.Context, registerUserDTO RegisterRequestDTO) error
 	GenerateToken(claims JwtCustomClaims) (string, error)
-	ResetPassword(ctx context.Context, email string, newPassword string) error
+	ResetPassword(ctx context.Context, id int, newPassword string) error
 }

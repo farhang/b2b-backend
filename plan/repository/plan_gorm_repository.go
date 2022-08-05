@@ -10,6 +10,22 @@ type PlanGormRepository struct {
 	db *gorm.DB
 }
 
+func (p PlanGormRepository) GetByUserId(ctx context.Context, id int) (domain.Plan, error) {
+	var pr domain.Profile
+	var pl domain.Plan
+
+	err := p.db.WithContext(ctx).Where(domain.Profile{UserID: uint(id)}).First(&pr).Error
+	if err != nil {
+		return domain.Plan{}, err
+	}
+	err = p.db.WithContext(ctx).First(&pl, 1).Error
+
+	if err != nil {
+		return pl, nil
+	}
+	return pl, nil
+}
+
 func (p PlanGormRepository) Fetch(ctx context.Context) ([]domain.Plan, error) {
 	var plans []domain.Plan
 	err := p.db.WithContext(ctx).Find(&plans).Error

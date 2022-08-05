@@ -29,18 +29,21 @@ type PlanResponseDTO struct {
 }
 
 type PlanUseCase interface {
+	GetByUserId(ctx context.Context, id int) (Plan, error)
 	Fetch(ctx context.Context) ([]Plan, error)
 	Store(ctx context.Context, plan PlanStoreRequestDTO) error
 	Delete(ctx context.Context) error
 }
 
 type PlanRepository interface {
+	GetByUserId(ctx context.Context, id int) (Plan, error)
 	Fetch(ctx context.Context) ([]Plan, error)
 	Store(ctx context.Context, plan Plan) error
 	Delete(ctx context.Context) error
 }
 
 type PlanHttpHandler interface {
+	GetMyPlan(ctx echo.Context) error
 	Fetch(ctx echo.Context) error
 	Store(ctx echo.Context) error
 	Delete(ctx echo.Context) error

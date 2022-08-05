@@ -95,7 +95,7 @@ func (ajh *AuthJwtHttpHandler) ResetPassword(c echo.Context) error {
 	if err := c.Bind(&p); err != nil {
 		return common.ErrHttpBadRequest(err)
 	}
-	err := ajh.AuthUseCase.ResetPassword(ctx, p.Email, p.Password)
+	err := ajh.AuthUseCase.ResetPassword(ctx, p.UserID, p.Password)
 	if err != nil {
 		return err
 	}

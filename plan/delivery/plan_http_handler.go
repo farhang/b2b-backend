@@ -11,6 +11,36 @@ type PlanHttpHandler struct {
 	pu domain.PlanUseCase
 }
 
+// GetMyPlan godoc
+// @Summary   get my plan
+// @Tags     plan
+// @Accept   json
+// @Produce  json
+// @Security  ApiKeyAuth
+// @Router   /plans/me/ [get]
+// @Success  200  {object} common.ResponseDTO
+func (ph *PlanHttpHandler) GetMyPlan(ctx echo.Context) error {
+	var c = ctx.Request().Context()
+	id := ctx.Get("userID").(int)
+	p, err := ph.pu.GetByUserId(c, id)
+	if err != nil {
+		return err
+	}
+
+	pr := domain.PlanResponseDTO{
+		ID:            p.ID,
+		Title:         p.Title,
+		Description:   p.Description,
+		ProfitPercent: p.ProfitPercent,
+		Duration:      p.Duration,
+	}
+
+	return ctx.JSON(http.StatusOK, common.ResponseDTO{
+		Data:    pr,
+		Message: http.StatusText(http.StatusOK),
+	})
+}
+
 // Fetch godoc
 // @Summary  Get plans
 // @Tags     plan
@@ -76,9 +106,8 @@ func NewPlanHttpHandler(e *echo.Echo, pu domain.PlanUseCase) domain.PlanHttpHand
 	handler := &PlanHttpHandler{pu}
 	pg := e.Group("/plans", common.AuthMiddleWare(), common.CASBINMiddleWare())
 	pg.POST("/", handler.Store)
+	pg.GET("/me/", handler.GetMyPlan)
 	pg.GET("/", handler.Fetch)
 
 	return handler
 }
-
-/**/

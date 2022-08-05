@@ -288,6 +288,33 @@ const docTemplate = `{
                 }
             }
         },
+        "/plans/me/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "plan"
+                ],
+                "summary": "get my plan",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.ResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
         "/profiles/": {
             "get": {
                 "security": [
@@ -747,7 +774,7 @@ const docTemplate = `{
                 "duration": {
                     "type": "integer"
                 },
-                "profitPercent": {
+                "profit_percent": {
                     "type": "integer"
                 },
                 "title": {
@@ -805,15 +832,15 @@ const docTemplate = `{
         "domain.ResetPasswordRequestDTO": {
             "type": "object",
             "required": [
-                "email",
-                "password"
+                "password",
+                "user_id"
             ],
             "properties": {
-                "email": {
-                    "type": "string"
-                },
                 "password": {
                     "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },

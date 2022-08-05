@@ -53,8 +53,8 @@ func (ac *AuthJwtUseCase) Login(c context.Context, loginUserDTO domain.LoginRequ
 
 }
 
-func (ac *AuthJwtUseCase) ResetPassword(ctx context.Context, email string, newPassword string) error {
-	user, err := ac.UserUseCase.GetByEmail(ctx, email)
+func (ac *AuthJwtUseCase) ResetPassword(ctx context.Context, id int, newPassword string) error {
+	user, err := ac.UserUseCase.GetById(ctx, id)
 	if errors.Is(common.ErrNotFound, err) {
 		return common.ErrHttpNotFound(err)
 	}
