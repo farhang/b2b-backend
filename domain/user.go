@@ -28,7 +28,7 @@ type User struct {
 	gorm.Model
 	Password        string
 	Email           string
-	IsEmailVerified bool
+	IsEmailVerified bool `gorm:"default:true"`
 	Role            Role `sql:"role"`
 	IsActive        bool `gorm:"default:true"`
 }
