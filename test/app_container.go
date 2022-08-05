@@ -21,7 +21,6 @@ type AppConfig struct {
 }
 
 func (ap *AppContainer) Start(ctx context.Context, appConfig AppConfig, psgConfig PostgresConfig, networkName string) (*AppContainer, error) {
-	log.Println("Starting the App Container ...")
 	dir, _ := os.Getwd()
 	container, err := tc.GenericContainer(ctx, tc.GenericContainerRequest{
 		ContainerRequest: tc.ContainerRequest{

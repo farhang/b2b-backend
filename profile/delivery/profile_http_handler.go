@@ -11,6 +11,7 @@ import (
 type ProfileHandler struct {
 	e  *echo.Echo
 	pu domain.ProfileUseCase
+	uu domain.UserUseCase
 }
 
 // GetById godoc
@@ -30,6 +31,10 @@ func (ph ProfileHandler) GetById(ctx echo.Context) error {
 	}
 
 	p, err := ph.pu.GetById(c, id)
+
+	if err != nil {
+		return err
+	}
 
 	profileResponse := domain.ProfileResponseDTO{
 		ID:                  p.ID,
@@ -111,6 +116,8 @@ func (ph ProfileHandler) Fetch(ctx echo.Context) error {
 		profilesResponse[i].Position = profiles[i].Position
 		profilesResponse[i].CompanyName = profiles[i].CompanyName
 		profilesResponse[i].MobileNumberCompany = profiles[i].MobileNumberCompany
+		profilesResponse[i].MobileNumberCompany = profiles[i].MobileNumberCompany
+		profilesResponse[i].IsActive = profiles[i].User.IsActive
 	}
 
 	return ctx.JSON(http.StatusOK, common.ResponseDTO{
@@ -124,6 +131,7 @@ func (ph ProfileHandler) Fetch(ctx echo.Context) error {
 // @Tags     profile
 // @Accept   json
 // @Produce  json
+// @Security  ApiKeyAuth
 // @Param    id  path      int                        true  "Profile id"
 // @success  200    {object}  common.ResponseDTO  "Email verification code"
 // @Param    message  body    domain.UpdateProfileRequestDTO  true  "Profile"
@@ -145,8 +153,8 @@ func (ph ProfileHandler) Update(ctx echo.Context) error {
 	return ph.pu.Update(c, p, id)
 }
 
-func NewProfileHttpHandler(e *echo.Echo, pu domain.ProfileUseCase) domain.ProfileDelivery {
-	handler := &ProfileHandler{e, pu}
+func NewProfileHttpHandler(e *echo.Echo, pu domain.ProfileUseCase, uu domain.UserUseCase) domain.ProfileDelivery {
+	handler := &ProfileHandler{e, pu, uu}
 	pg := e.Group("profiles", common.AuthMiddleWare())
 	pg.GET("/", handler.Fetch)
 	pg.GET("/me/", handler.GetMyProfile)

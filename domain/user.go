@@ -30,6 +30,7 @@ type User struct {
 	Email           string
 	IsEmailVerified bool
 	Role            Role `sql:"role"`
+	IsActive        bool `gorm:"default:true"`
 }
 
 type EmailVerification struct {

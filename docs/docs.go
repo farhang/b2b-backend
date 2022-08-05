@@ -405,6 +405,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -849,6 +854,9 @@ const docTemplate = `{
             "properties": {
                 "company_name": {
                     "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
                 },
                 "last_name": {
                     "type": "string"

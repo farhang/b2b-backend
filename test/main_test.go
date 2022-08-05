@@ -140,7 +140,7 @@ var _ = Describe("Main", func() {
 		newPassword := "newPassword"
 		It("should reset password successfully", func() {
 			resetPasswordRequestPayload := domain.ResetPasswordRequestDTO{
-				Email:    registerUserPayload.Email,
+				UserID:   1,
 				Password: newPassword,
 			}
 			resp, _ := client.R().

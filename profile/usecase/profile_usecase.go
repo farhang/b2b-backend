@@ -23,6 +23,7 @@ func (pu ProfileUseCase) Update(ctx context.Context, profile domain.UpdateProfil
 	p.Position = profile.Position
 	p.PlanId = uint(profile.PlanId)
 	p.CompanyName = profile.CompanyName
+	p.User.IsActive = profile.IsActive
 
 	return pu.pr.Update(ctx, p)
 }

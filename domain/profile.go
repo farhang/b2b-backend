@@ -28,6 +28,7 @@ type UpdateProfileRequestDTO struct {
 	CompanyName         string `json:"company_name"`
 	MobileNumberCompany string `json:"mobile_number_company"`
 	PlanId              int    `json:"plan_id"`
+	IsActive            bool   `json:"is_active"`
 }
 
 type ProfileResponseDTO struct {
@@ -40,6 +41,7 @@ type ProfileResponseDTO struct {
 	Position            string `json:"position"`
 	CompanyName         string `json:"company_name"`
 	MobileNumberCompany string `json:"mobile_number_company"`
+	IsActive            bool   `json:"is_active"`
 }
 
 type ProfileDelivery interface {
