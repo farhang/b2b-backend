@@ -23,6 +23,7 @@ type TransactionHttpHandler struct {
 // @Router    /transactions/ [get]
 func (j *TransactionHttpHandler) Fetch(ctx echo.Context) error {
 	c := ctx.Request().Context()
+
 	transactions, err := j.tu.Fetch(c)
 
 	transactionsResponse := make([]domain.TransactionResponseDTO, len(transactions))
@@ -31,6 +32,7 @@ func (j *TransactionHttpHandler) Fetch(ctx echo.Context) error {
 			CreatedAt:       transactions[i].CreatedAt,
 			TransactionType: transactions[i].TransactionType,
 			Amount:          transactions[i].Amount,
+			Email:           transactions[i].User.Email,
 		}
 	}
 

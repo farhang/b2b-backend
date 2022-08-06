@@ -42,6 +42,7 @@ type TransactionResponseDTO struct {
 	CreatedAt       time.Time       `json:"created_at"`
 	Amount          float64         `json:"amount"`
 	TransactionType TransactionType `json:"type"`
+	Email           string          `json:"email,omitempty"`
 }
 
 type DepositRequestDTO struct {
