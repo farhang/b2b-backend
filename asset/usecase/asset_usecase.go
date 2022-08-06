@@ -41,7 +41,7 @@ func (a AssetUseCase) Store(ctx context.Context, asset domain.Asset) error {
 func (a AssetUseCase) GetAmountByUserId(ctx context.Context, userId int) (float64, error) {
 	asset, err := a.ar.GetByUserId(ctx, userId)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 	return asset.Amount, nil
 }

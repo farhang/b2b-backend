@@ -21,7 +21,7 @@ func (p ProfileRepository) GetByUserId(ctx context.Context, id int) (domain.Prof
 func (p ProfileRepository) Update(ctx context.Context, profile domain.Profile) error {
 	p.db.Model(&domain.User{}).Where("id = ?", profile.UserID).Update("is_active", profile.User.IsActive)
 
-	return p.db.WithContext(ctx).Save(&profile).Error
+	return p.db.WithContext(ctx).Omit("User").Save(&profile).Error
 
 }
 
