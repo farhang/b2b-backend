@@ -29,6 +29,7 @@ import (
 	"github.com/swaggo/echo-swagger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"log"
 	"log/syslog"
 	"net/http"
@@ -113,7 +114,9 @@ func main() {
 	}
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s  dbname=%s  port=%s TimeZone=%s", config.Host, config.Username, config.Password, config.DBName, config.Port, config.TimeZone)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	err = db.AutoMigrate(&domain.User{}, domain.EmailVerification{}, domain.Profile{})
 	err = db.AutoMigrate(&domain.Asset{}, domain.Plan{}, domain.Transaction{})
 
