@@ -90,7 +90,7 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 	c.Logger().Error(err)
 }
 
-// @title    Turkey Exchange API Documentation
+// @title    B2B API Documentation
 // @version  1.0
 
 // @securityDefinitions.apikey  ApiKeyAuth
