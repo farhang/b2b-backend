@@ -26,11 +26,12 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/swaggo/echo-swagger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"log"
 	"log/syslog"
 	"net/http"
 	"os"
@@ -85,6 +86,7 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 		return
 	}
 	_ = c.JSON(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+	log.Error().Err(err)
 	c.Logger().Error(err)
 }
 
@@ -97,10 +99,14 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 // @description                 Description for what is this security definition being used
 func main() {
 	w, err := syslog.Dial("udp", "logs5.papertrailapp.com:19181", syslog.LOG_EMERG|syslog.LOG_KERN, "myapp")
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	wr := zerolog.MultiLevelWriter(w, zerolog.ConsoleWriter{Out: os.Stdout})
+	log.Logger = zerolog.New(wr)
 
 	if err != nil {
-		log.Fatal("failed to dial syslog")
+		log.Panic().Msg("failed to dial syslog")
 	}
+
 	config := DBConfig{
 		Engine:   os.Getenv("DB_DRIVER"),
 		Host:     os.Getenv("DB_HOST"),
@@ -121,24 +127,32 @@ func main() {
 	err = db.AutoMigrate(&domain.Asset{}, domain.Plan{}, domain.Transaction{})
 
 	if err != nil {
-		log.Fatal(err)
+		log.Error().Err(err)
 	}
 
 	if err != nil {
-		log.Fatal(err)
+		log.Error().Err(err)
 	}
 
 	e := echo.New()
 	e.HTTPErrorHandler = customHTTPErrorHandler
 	e.Use(common.CORSMiddleWare())
 
-	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Output: w,
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogURI:    true,
+		LogStatus: true,
+		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			log.Info().
+				Str("URI", v.URI).
+				Int("status", v.Status).
+				Str("method", v.Method).
+				Msg("request")
+			return nil
+		},
 	}))
 
 	docs.SwaggerInfo.Host = os.Getenv("BASE_URL")
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
-
 	profRepository := profileRepository.NewProfileRepository(db)
 	asstRepository := assetRepository.NewAssetRepository(db)
 	usrRepository := userGormRepository.NewGormUserRepository(db)

@@ -7,7 +7,7 @@ import (
 	casbin_mw "github.com/labstack/echo-contrib/casbin"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"log"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"
 )
@@ -18,6 +18,7 @@ func AuthMiddleWare() echo.MiddlewareFunc {
 		SuccessHandler: func(ctx echo.Context) {
 			user := ctx.Get("user").(*jwt.Token)
 			claims := user.Claims.(*domain.JwtCustomClaims)
+			log.Info().Int("user", claims.UserId).Msg("authenticated user")
 			ctx.Set("userID", claims.UserId)
 			ctx.Set("role", claims.Role)
 		},
@@ -28,14 +29,13 @@ func AuthMiddleWare() echo.MiddlewareFunc {
 func CASBINMiddleWare() echo.MiddlewareFunc {
 	ce, err := casbin.NewEnforcer("auth_model.conf", "policy.csv")
 	if err != nil {
-		log.Fatalln(err)
+		log.Error().Err(err)
 	}
+
 	return casbin_mw.MiddlewareWithConfig(casbin_mw.Config{
 		Enforcer: ce,
 		UserGetter: func(c echo.Context) (string, error) {
 			role := c.Get("role").(string)
-			log.Println(ce.Enforce("ADMIN", c.Request().URL.Path, "get"))
-			log.Println("ADMIN", c.Request().URL.Path, "get")
 			return role, nil
 		},
 	})
