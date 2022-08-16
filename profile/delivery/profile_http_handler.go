@@ -37,9 +37,9 @@ func (ph ProfileHandler) GetById(ctx echo.Context) error {
 	}
 
 	profileResponse := domain.ProfileResponseDTO{
-		ID:                  p.ID,
-		UserID:              p.UserID,
-		PlanId:              p.PlanId,
+		ID:     p.ID,
+		UserID: p.UserID,
+		//PlanId:              p.PlanId,
 		Name:                p.Name,
 		LastName:            p.LastName,
 		MobileNumber:        p.MobileNumber,
@@ -76,9 +76,9 @@ func (ph ProfileHandler) GetMyProfile(ctx echo.Context) error {
 	}
 
 	pr := domain.ProfileResponseDTO{
-		ID:                  p.ID,
-		UserID:              p.UserID,
-		PlanId:              p.PlanId,
+		ID:     p.ID,
+		UserID: p.UserID,
+		//PlanId:              p.PlanId,
 		Name:                p.Name,
 		LastName:            p.LastName,
 		MobileNumber:        p.MobileNumber,
@@ -108,7 +108,7 @@ func (ph ProfileHandler) Fetch(ctx echo.Context) error {
 
 	for i := range profiles {
 		profilesResponse[i].ID = profiles[i].ID
-		profilesResponse[i].PlanId = profiles[i].PlanId
+		//profilesResponse[i].PlanId = profiles[i].PlanId
 		profilesResponse[i].UserID = profiles[i].UserID
 		profilesResponse[i].Name = profiles[i].Name
 		profilesResponse[i].LastName = profiles[i].LastName

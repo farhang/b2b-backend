@@ -16,8 +16,17 @@ type Profile struct {
 	CompanyName         string
 	User                User
 	UserID              uint
-	Plan                Plan
-	PlanId              uint
+	Plans               []ProfilePlan
+}
+
+type ProfilePlan struct {
+	gorm.Model
+	ProfileID uint `gorm:"primaryKey"`
+	Profile   Profile
+	PlanID    int `gorm:"primaryKey"`
+	Plan      Plan
+	Amount    int
+	Status    int
 }
 
 type UpdateProfileRequestDTO struct {

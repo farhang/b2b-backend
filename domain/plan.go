@@ -12,6 +12,7 @@ type Plan struct {
 	Description   string
 	ProfitPercent int
 	Duration      int
+	Profiles      []ProfilePlan
 }
 
 type PlanStoreRequestDTO struct {
@@ -28,15 +29,26 @@ type PlanResponseDTO struct {
 	Duration      int    `json:"duration"`
 }
 
+type GetMyPlansDTO struct {
+	ID            uint   `json:"id"`
+	PlanId        int    `json:"plan_id"`
+	Title         string `json:"title"`
+	Description   string `json:"description"`
+	ProfitPercent int    `json:"profit"`
+	Duration      int    `json:"duration"`
+	Amount        int    `json:"amount"`
+	Status        int    `json:"status"`
+}
+
 type PlanUseCase interface {
-	GetByUserId(ctx context.Context, id int) (Plan, error)
+	GetByUserId(ctx context.Context, id int) ([]ProfilePlan, error)
 	Fetch(ctx context.Context) ([]Plan, error)
 	Store(ctx context.Context, plan PlanStoreRequestDTO) error
 	Delete(ctx context.Context) error
 }
 
 type PlanRepository interface {
-	GetByUserId(ctx context.Context, id int) (Plan, error)
+	GetByUserId(ctx context.Context, id int) ([]ProfilePlan, error)
 	Fetch(ctx context.Context) ([]Plan, error)
 	Store(ctx context.Context, plan Plan) error
 	Delete(ctx context.Context) error

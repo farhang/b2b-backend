@@ -682,6 +682,48 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/plans": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get user plans",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.ResponseDTO"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.GetMyPlansDTO"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/users/{id}/transactions/": {
             "get": {
                 "security": [
@@ -737,6 +779,35 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "domain.GetMyPlansDTO": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "plan_id": {
+                    "type": "integer"
+                },
+                "profit": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },

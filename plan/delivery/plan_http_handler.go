@@ -27,16 +27,16 @@ func (ph *PlanHttpHandler) GetMyPlan(ctx echo.Context) error {
 		return err
 	}
 
-	pr := domain.PlanResponseDTO{
-		ID:            p.ID,
-		Title:         p.Title,
-		Description:   p.Description,
-		ProfitPercent: p.ProfitPercent,
-		Duration:      p.Duration,
-	}
+	//pr := domain.PlanResponseDTO{
+	//	ID:            p.ID,
+	//	Title:         p.Title,
+	//	Description:   p.Description,
+	//	ProfitPercent: p.ProfitPercent,
+	//	Duration:      p.Duration,
+	//}
 
 	return ctx.JSON(http.StatusOK, common.ResponseDTO{
-		Data:    pr,
+		Data:    p,
 		Message: http.StatusText(http.StatusOK),
 	})
 }

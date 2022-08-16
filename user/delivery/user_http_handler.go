@@ -5,12 +5,14 @@ import (
 	"backend-core/domain"
 	"errors"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"strconv"
 )
 
 type UserHttpHandler struct {
 	UserUseCase domain.UserUseCase
+	pu          domain.PlanUseCase
 }
 
 // VerifyEmail godoc
@@ -126,6 +128,41 @@ func (uh *UserHttpHandler) GetMe(ctx echo.Context) error {
 	})
 }
 
+// GetMyPlans godoc
+// @Summary   Get user plans
+// @Tags     user
+// @Accept   json
+// @Produce  json
+// @Security  ApiKeyAuth
+// @Success  200  {object} common.ResponseDTO{data=[]domain.GetMyPlansDTO}
+// @Router    /users/plans [get]
+func (uh *UserHttpHandler) GetMyPlans(ctx echo.Context) error {
+	var c = ctx.Request().Context()
+	id := ctx.Get("userID").(int)
+	log.Info().Int("userId", id).Msg("here is true")
+	p, err := uh.pu.GetByUserId(c, id)
+	if err != nil {
+		return err
+	}
+	pr := make([]domain.GetMyPlansDTO, len(p))
+	for i := range pr {
+		pr[i] = domain.GetMyPlansDTO{
+			ID:            p[i].ID,
+			PlanId:        p[i].PlanID,
+			Title:         p[i].Plan.Title,
+			Description:   p[i].Plan.Description,
+			ProfitPercent: p[i].Plan.ProfitPercent,
+			Amount:        p[i].Amount,
+			Status:        p[i].Status,
+		}
+	}
+
+	return ctx.JSON(http.StatusOK, common.ResponseDTO{
+		Data:    pr,
+		Message: http.StatusText(http.StatusOK),
+	})
+}
+
 // SendEmailVerificationCode godoc
 // @Summary  Send verification code to user
 // @Tags     email
@@ -152,15 +189,16 @@ func (uh *UserHttpHandler) SendEmailVerificationCode(ctx echo.Context) error {
 	})
 }
 
-func NewUserHttpHandler(echo *echo.Echo, userUseCase domain.UserUseCase) domain.UserHttpHandler {
+func NewUserHttpHandler(echo *echo.Echo, userUseCase domain.UserUseCase, pu domain.PlanUseCase) domain.UserHttpHandler {
 	handler := &UserHttpHandler{
 		UserUseCase: userUseCase,
+		pu:          pu,
 	}
 
 	ug := echo.Group("users", common.AuthMiddleWare(), common.CASBINMiddleWare())
+	ug.GET("/plans", handler.GetMyPlans)
 	ug.GET("/", handler.FetchUsers)
 	ug.GET("/me", handler.GetMe)
-
 	eg := echo.Group("emails/:email/")
 	eg.PATCH("verify", handler.VerifyEmail)
 	eg.POST("send-verification-code", handler.SendEmailVerificationCode)

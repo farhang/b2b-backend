@@ -32,7 +32,6 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"log/syslog"
 	"net/http"
 	"os"
 )
@@ -98,14 +97,14 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 // @name                        Authorization
 // @description                 Description for what is this security definition being used
 func main() {
-	w, err := syslog.Dial("udp", "logs5.papertrailapp.com:19181", syslog.LOG_EMERG|syslog.LOG_KERN, "myapp")
+	//w, err := syslog.Dial("udp", "logs5.papertrailapp.com:19181", syslog.LOG_EMERG|syslog.LOG_KERN, "myapp")
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	wr := zerolog.MultiLevelWriter(w, zerolog.ConsoleWriter{Out: os.Stdout})
+	wr := zerolog.MultiLevelWriter(zerolog.ConsoleWriter{Out: os.Stdout})
 	log.Logger = zerolog.New(wr)
 
-	if err != nil {
-		log.Panic().Msg("failed to dial syslog")
-	}
+	//if err != nil {
+	//	log.Panic().Msg("failed to dial syslog")
+	//}
 
 	config := DBConfig{
 		Engine:   os.Getenv("DB_DRIVER"),
@@ -123,7 +122,7 @@ func main() {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
-	err = db.AutoMigrate(&domain.User{}, domain.EmailVerification{}, domain.Profile{})
+	err = db.AutoMigrate(&domain.User{}, domain.EmailVerification{}, domain.Profile{}, domain.ProfilePlan{})
 	err = db.AutoMigrate(&domain.Asset{}, domain.Plan{}, domain.Transaction{})
 
 	if err != nil {
@@ -153,24 +152,25 @@ func main() {
 
 	docs.SwaggerInfo.Host = os.Getenv("BASE_URL")
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
+
 	profRepository := profileRepository.NewProfileRepository(db)
 	asstRepository := assetRepository.NewAssetRepository(db)
 	usrRepository := userGormRepository.NewGormUserRepository(db)
 	transRepository := transactionRepository.NewTransactionRepository(db)
 	plnRepository := planGormRepository.NewPlanGormRepository(db)
+
 	profUseCase := profileUseCase.NewProfileUseCase(profRepository)
 	asstUseCase := assetUseCase.NewAssetUseCase(asstRepository)
 	usrUseCase := userUseCase.NewUserUseCase(usrRepository, asstUseCase, profUseCase, db)
-	profileUseHandler.NewProfileHttpHandler(e, profUseCase, usrUseCase)
-	userHttpHandler.NewUserHttpHandler(e, usrUseCase)
+	plnUseCase := planGormUseCase.NewPlanUseCase(plnRepository)
 	transUseCase := transactionUseCase.NewTransactionUseCase(transRepository, usrUseCase, asstUseCase, db)
+	athUseCase := authJwtUseCase.NewJwtAuthUseCase(usrUseCase)
+
+	profileUseHandler.NewProfileHttpHandler(e, profUseCase, usrUseCase)
+	userHttpHandler.NewUserHttpHandler(e, usrUseCase, plnUseCase)
 	transactionHandler.NewTransactionHttpHandler(e, transUseCase)
 	assetHandler.NewAssetHttpHandler(e, asstUseCase, transUseCase)
-
-	plnUseCase := planGormUseCase.NewPlanUseCase(plnRepository)
 	planHandler.NewPlanHttpHandler(e, plnUseCase)
-
-	athUseCase := authJwtUseCase.NewJwtAuthUseCase(usrUseCase)
 	authJwtHttpHandler.NewAuthHttpHandler(e, athUseCase)
 
 	e.Logger.Fatal(e.Start(":8080"))

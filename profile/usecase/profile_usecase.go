@@ -21,10 +21,10 @@ func (pu ProfileUseCase) Update(ctx context.Context, profile domain.UpdateProfil
 	p.MobileNumber = profile.MobileNumber
 	p.MobileNumberCompany = profile.MobileNumberCompany
 	p.Position = profile.Position
-	p.PlanId = uint(profile.PlanId)
+	//p.PlanId = uint(profile.PlanId)
 	p.CompanyName = profile.CompanyName
 	p.User.IsActive = profile.IsActive
-	p.Plan.ID = uint(profile.PlanId)
+	//p.Plan.ID = uint(profile.PlanId)
 
 	return pu.pr.Update(ctx, p)
 }
