@@ -5,7 +5,6 @@ import (
 	"backend-core/domain"
 	"errors"
 	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog/log"
 	"net/http"
 	"strconv"
 )
@@ -13,6 +12,11 @@ import (
 type UserHttpHandler struct {
 	UserUseCase domain.UserUseCase
 	pu          domain.PlanUseCase
+}
+
+func (uh *UserHttpHandler) DepositToUserPlan(ctx echo.Context) error {
+	//TODO implement me
+	panic("implement me")
 }
 
 // VerifyEmail godoc
@@ -130,16 +134,15 @@ func (uh *UserHttpHandler) GetMe(ctx echo.Context) error {
 
 // GetMyPlans godoc
 // @Summary   Get user plans
-// @Tags     user
+// @Tags     user's plan
 // @Accept   json
 // @Produce  json
 // @Security  ApiKeyAuth
 // @Success  200  {object} common.ResponseDTO{data=[]domain.GetMyPlansDTO}
-// @Router    /users/plans [get]
+// @Router    /users/plans/me [get]
 func (uh *UserHttpHandler) GetMyPlans(ctx echo.Context) error {
 	var c = ctx.Request().Context()
 	id := ctx.Get("userID").(int)
-	log.Info().Int("userId", id).Msg("here is true")
 	p, err := uh.pu.GetByUserId(c, id)
 	if err != nil {
 		return err
@@ -150,6 +153,7 @@ func (uh *UserHttpHandler) GetMyPlans(ctx echo.Context) error {
 			ID:            p[i].ID,
 			PlanId:        p[i].PlanID,
 			Title:         p[i].Plan.Title,
+			Duration:      p[i].Plan.Duration,
 			Description:   p[i].Plan.Description,
 			ProfitPercent: p[i].Plan.ProfitPercent,
 			Amount:        p[i].Amount,
@@ -196,7 +200,7 @@ func NewUserHttpHandler(echo *echo.Echo, userUseCase domain.UserUseCase, pu doma
 	}
 
 	ug := echo.Group("users", common.AuthMiddleWare(), common.CASBINMiddleWare())
-	ug.GET("/plans", handler.GetMyPlans)
+	ug.GET("/plans/me", handler.GetMyPlans)
 	ug.GET("/", handler.FetchUsers)
 	ug.GET("/me", handler.GetMe)
 	eg := echo.Group("emails/:email/")

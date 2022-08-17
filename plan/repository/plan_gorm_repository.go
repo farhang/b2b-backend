@@ -11,11 +11,6 @@ type PlanGormRepository struct {
 }
 
 func (p PlanGormRepository) GetByUserId(ctx context.Context, id int) ([]domain.ProfilePlan, error) {
-	//var pr domain.Profile
-	//var pl domain.Plan
-	//var pp []domain.ProfilePlan
-
-	//err := p.db.WithContext(ctx).Joins("Profile").Joins("Profile.User").Model(&domain.ProfilePlan{}).Scan(&pp).Error
 	var pp []domain.ProfilePlan
 	err := p.db.Joins("JOIN profiles p on p.id = profile_plans.profile_id").
 		Joins("JOIN users u on u.id = p.user_id").
@@ -28,6 +23,10 @@ func (p PlanGormRepository) GetByUserId(ctx context.Context, id int) ([]domain.P
 	}
 
 	return pp, nil
+}
+
+func DepositToUserPlan() {
+
 }
 
 func (p PlanGormRepository) Fetch(ctx context.Context) ([]domain.Plan, error) {

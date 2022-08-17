@@ -2,9 +2,29 @@ package domain
 
 import (
 	"context"
+	"database/sql/driver"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
+	"time"
 )
+
+type ProfilePlanStatus string
+
+const (
+	ACTIVE   ProfilePlanStatus = "ACTIVE"
+	INACTIVE ProfilePlanStatus = "INACTIVE"
+	PENDING  ProfilePlanStatus = "PENDING"
+	EXPIRED  ProfilePlanStatus = "EXPIRED"
+)
+
+func (tt *ProfilePlanStatus) Scan(value interface{}) error {
+	*tt = ProfilePlanStatus(value.(string))
+	return nil
+}
+
+func (tt ProfilePlanStatus) Value() (driver.Value, error) {
+	return string(tt), nil
+}
 
 type Profile struct {
 	gorm.Model
@@ -21,12 +41,14 @@ type Profile struct {
 
 type ProfilePlan struct {
 	gorm.Model
-	ProfileID uint `gorm:"primaryKey"`
-	Profile   Profile
-	PlanID    int `gorm:"primaryKey"`
-	Plan      Plan
-	Amount    int
-	Status    int
+	Profile      Profile
+	ProfileID    uint
+	Plan         Plan
+	PlanID       int
+	Amount       int
+	Status       int
+	ExpiresAt    time.Time
+	Transactions []Transaction
 }
 
 type UpdateProfileRequestDTO struct {

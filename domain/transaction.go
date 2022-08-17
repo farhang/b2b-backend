@@ -36,6 +36,8 @@ type Transaction struct {
 	TransactionType TransactionType `sql:"transaction_type"`
 	User            User
 	UserId          uint
+	ProfilePlan     ProfilePlan
+	ProfilePlanId   uint
 }
 
 type TransactionResponseDTO struct {

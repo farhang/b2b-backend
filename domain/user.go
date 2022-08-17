@@ -82,6 +82,7 @@ type UserRepository interface {
 }
 
 type UserHttpHandler interface {
+	DepositToUserPlan(ctx echo.Context) error
 	FetchUsers(ctx echo.Context) error
 	GetById(ctx echo.Context) error
 	GetMe(ctx echo.Context) error

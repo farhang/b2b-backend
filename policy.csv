@@ -1,4 +1,4 @@
-p, ADMIN, /* , *
+p, MEMBER, /* , *
 p, MEMBER, /transactions/me* , *
 p, MEMBER, /plans/me* , *
 p, MEMBER, /users/me* , *

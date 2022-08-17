@@ -94,10 +94,20 @@ func (ur *UserGormRepository) Register(ctx context.Context, registerDTO domain.R
 		if err := tx.WithContext(ctx).Create(&p).Error; err != nil {
 			return err
 		}
+		var pl domain.Plan
+
+		if err := tx.FirstOrCreate(&pl, domain.Plan{
+			Title:         "Basic",
+			Description:   "",
+			ProfitPercent: 0,
+			Duration:      0,
+		}).Error; err != nil {
+			return err
+		}
 
 		pp := domain.ProfilePlan{
 			Profile: p,
-			PlanID:  1,
+			Plan:    pl,
 		}
 
 		if err := tx.WithContext(ctx).Create(&pp).Error; err != nil {

@@ -540,44 +540,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/transactions/profit": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "transaction"
-                ],
-                "summary": "create withdraw transaction",
-                "parameters": [
-                    {
-                        "description": "Withdraw data",
-                        "name": "message",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.ProfitRequestDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/common.ResponseDTO"
-                        }
-                    }
-                }
-            }
-        },
         "/transactions/withdraw": {
             "post": {
                 "security": [
@@ -682,7 +644,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/plans": {
+        "/users/plans/me": {
             "get": {
                 "security": [
                     {
@@ -696,7 +658,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "user's plan"
                 ],
                 "summary": "Get user plans",
                 "responses": {
@@ -855,17 +817,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "domain.ProfitRequestDTO": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "user_id": {
-                    "type": "integer"
                 }
             }
         },

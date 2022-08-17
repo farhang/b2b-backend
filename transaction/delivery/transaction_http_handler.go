@@ -133,15 +133,6 @@ func (j *TransactionHttpHandler) WithDraw(ctx echo.Context) error {
 	})
 }
 
-// Profit godoc
-// @Summary  create withdraw transaction
-// @Tags     transaction
-// @Accept   json
-// @Produce  json
-// @Param    message  body      domain.ProfitRequestDTO true  "Withdraw data"
-// @Security  ApiKeyAuth
-// @Success  200      {object}  common.ResponseDTO
-// @Router   /transactions/profit [post]
 func (j *TransactionHttpHandler) Profit(ctx echo.Context) error {
 	c := ctx.Request().Context()
 	var p domain.ProfitRequestDTO
