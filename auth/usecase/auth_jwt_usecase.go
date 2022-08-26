@@ -48,7 +48,7 @@ func (ac *AuthJwtUseCase) Login(c context.Context, loginUserDTO domain.LoginRequ
 		return nil, common.ErrEmailIsNotVerified
 	}
 
-	token, _ := ac.GenerateToken(domain.JwtCustomClaims{UserId: int(user.ID), Role: string(user.Role)})
+	token, _ := ac.GenerateToken(domain.JwtCustomClaims{UserId: int(user.ID), Role: user.RoleID})
 	return &token, nil
 
 }

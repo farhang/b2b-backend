@@ -157,30 +157,47 @@ var _ = Describe("Main", func() {
 			Expect(resp.StatusCode()).To(Equal(http.StatusUnauthorized))
 		})
 	})
-
 	Describe("Users", func() {
-		It("should return signed-up user in /me", func() {
+		It("should return signed-up user in authenticated user", func() {
 			var res = common.ResponseDTO{}
 			resp, _ := client.R().
 				SetHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
 				SetResult(&res).
-				Get(fmt.Sprintf("%s/users/me", baseUrl))
+				Get(fmt.Sprintf("%s/user", baseUrl))
 			Expect(resp.StatusCode()).To(Equal(http.StatusOK))
 			By("the user should be same by the registered user")
 			email := res.Data.(map[string]interface{})["email"]
 			Expect(email).To(Equal(registerUserPayload.Email))
 		})
 	})
-
 	Describe("Assets", func() {
+		UserId := "1"
+		p := domain.StoreTransactionRequestDTO{
+			Amount:            10.2,
+			Description:       "description...",
+			TransactionTypeId: 1,
+		}
+
 		It("should can deposit", func() {
+			resp, _ := client.R().
+				SetBody(p).
+				SetHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
+				Post(fmt.Sprintf("%s/users/%s/transactions", baseUrl, UserId))
+			By("The status code should be 200")
+			Expect(resp.StatusCode()).To(Equal(http.StatusCreated))
 		})
 		It("should the amount of the asset increased after depositing", func() {
-		})
-		It("should the amount of the asset decreased after withdraw", func() {
+			r := common.ResponseDTO{}
+			resp, _ := client.R().
+				SetHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
+				SetResult(&r).
+				Get(fmt.Sprintf("%s/user/asset", baseUrl))
+			By("The status code should be 200")
+			Expect(resp.StatusCode()).To(Equal(200))
+			amount := r.Data.(map[string]interface{})["amount"]
+			Expect(amount).To(Equal(p.Amount))
 		})
 	})
-
 	Describe("Plans", func() {
 		It("should be able to active a plan", func() {
 		})
@@ -192,21 +209,19 @@ var _ = Describe("Main", func() {
 		It("should create plan successfully", func() {
 		})
 	})
-
 	Describe("Orders", func() {
 		It("should be able to create order", func() {})
 		It("should be able to accept order", func() {})
 	})
-
-	Describe("Transactions request", func() {
-		It("should be able to create settled transaction request", func() {})
-		It("should be accept transaction request", func() {})
+	Describe("Transactions plan-request", func() {
+		It("should be able to create settled transaction plan-request", func() {})
+		It("should be accept transaction plan-request", func() {})
 	})
-
 	Describe("User's Plan", func() {
+		It("should be able to get list of registered user's plans ", func() {
+		})
 		It("should be able to deposit", func() {
 		})
 		It("should be able to register user in one plan", func() {})
-
 	})
 })

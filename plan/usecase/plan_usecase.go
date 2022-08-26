@@ -9,7 +9,7 @@ type PlanUseCase struct {
 	pr domain.PlanRepository
 }
 
-func (pu PlanUseCase) GetByUserId(ctx context.Context, id int) ([]domain.ProfilePlan, error) {
+func (pu PlanUseCase) GetByUserId(ctx context.Context, id int) ([]domain.UserPlan, error) {
 	return pu.pr.GetByUserId(ctx, id)
 }
 

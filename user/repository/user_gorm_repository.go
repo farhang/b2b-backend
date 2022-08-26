@@ -5,6 +5,7 @@ import (
 	"backend-core/domain"
 	"context"
 	"errors"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
 
@@ -65,7 +66,7 @@ func (ur *UserGormRepository) Register(ctx context.Context, registerDTO domain.R
 	var user = &domain.User{
 		Password: registerDTO.Password,
 		Email:    registerDTO.Email,
-		Role:     domain.MEMBER,
+		RoleID:   1,
 	}
 	return ur.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.WithContext(ctx).Create(&user).Error; err != nil {
@@ -105,15 +106,6 @@ func (ur *UserGormRepository) Register(ctx context.Context, registerDTO domain.R
 			return err
 		}
 
-		pp := domain.ProfilePlan{
-			Profile: p,
-			Plan:    pl,
-		}
-
-		if err := tx.WithContext(ctx).Create(&pp).Error; err != nil {
-			return err
-		}
-
 		return nil
 	})
 }
@@ -131,6 +123,13 @@ func (ur *UserGormRepository) GetById(ctx context.Context, id int) (*domain.User
 }
 
 func NewGormUserRepository(db *gorm.DB) domain.UserRepository {
-	db.Exec("DROP TYPE IF EXISTS role;CREATE TYPE role AS ENUM ('ADMIN', 'MEMBER');")
+	var result int64
+	db.Table("user_roles").Count(&result)
+	if result == 0 {
+		err := db.Create(domain.UserRoles).Error
+		if err != nil {
+			log.Error().Err(err)
+		}
+	}
 	return &UserGormRepository{db}
 }

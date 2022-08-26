@@ -10,8 +10,8 @@ type PlanGormRepository struct {
 	db *gorm.DB
 }
 
-func (p PlanGormRepository) GetByUserId(ctx context.Context, id int) ([]domain.ProfilePlan, error) {
-	var pp []domain.ProfilePlan
+func (p PlanGormRepository) GetByUserId(ctx context.Context, id int) ([]domain.UserPlan, error) {
+	var pp []domain.UserPlan
 	err := p.db.Joins("JOIN profiles p on p.id = profile_plans.profile_id").
 		Joins("JOIN users u on u.id = p.user_id").
 		Where("u.id = ?", id).

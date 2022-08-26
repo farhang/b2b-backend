@@ -2,54 +2,88 @@ package domain
 
 import (
 	"context"
-	"database/sql/driver"
 	"errors"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 	"time"
 )
 
-type TransactionType string
-
 var (
 	ErrNotEnoughAssetAmount = errors.New("you want to withdraw more than you have")
 )
 
 const (
-	DEPOSIT  TransactionType = "DEPOSIT"
-	WITHDRAW TransactionType = "WITHDRAW"
-	PROFIT   TransactionType = "PROFIT"
+	RialDeposit    string = "RIAL_DEPOSIT"
+	RialWithdraw   string = "RIAL_WITHDRAW"
+	TetherDeposit  string = "TETHER_DEPOSIT"
+	TetherWithdraw string = "WITHDRAW"
+	TetherProfit   string = "PROFIT_TETHER"
+	BuyTether      string = "BUY_TETHER"
+	SellTether     string = "SELL_TETHER"
 )
 
-func (tt *TransactionType) Scan(value interface{}) error {
-	*tt = TransactionType(value.(string))
+var TransactionTypes = []TransactionType{
+	{ID: 1, Name: RialDeposit},
+	{ID: 2, Name: RialWithdraw},
+	{ID: 3, Name: TetherDeposit},
+	{ID: 4, Name: TetherWithdraw},
+	{ID: 5, Name: TetherProfit},
+	{ID: 6, Name: BuyTether},
+	{ID: 7, Name: SellTether},
+}
+
+type TransactionType struct {
+	ID   uint
+	Name string
+}
+
+func GetTransactionIdByName(name string) *uint {
+	for _, tt := range TransactionTypes {
+		if tt.Name == name {
+			return &tt.ID
+		}
+	}
 	return nil
 }
 
-func (tt TransactionType) Value() (driver.Value, error) {
-	return string(tt), nil
+func GetTransactionNameById(id uint) *string {
+	for _, tt := range TransactionTypes {
+		if tt.ID == id {
+			return &tt.Name
+		}
+	}
+	return nil
 }
 
 type Transaction struct {
 	gorm.Model
-	Amount          float64         `gorm:"check:amount >= 0"`
-	TransactionType TransactionType `sql:"transaction_type"`
-	User            User
-	UserId          uint
-	ProfilePlan     ProfilePlan
-	ProfilePlanId   uint
+	Amount            float64 `gorm:"check:amount >= 0"`
+	TransactionType   TransactionType
+	TransactionTypeID uint
+	Description       string
+	User              User
+	UserId            uint
+}
+
+type UserPlanTransaction struct {
+	gorm.Model
+	Transaction   Transaction
+	TransactionID uint
+	UserPlan      UserPlan
+	UserPlanID    uint
 }
 
 type TransactionResponseDTO struct {
-	CreatedAt       time.Time       `json:"created_at"`
-	Amount          float64         `json:"amount"`
-	TransactionType TransactionType `json:"type"`
-	Email           string          `json:"email,omitempty"`
+	CreatedAt       time.Time `json:"created_at"`
+	Amount          float64   `json:"amount"`
+	TransactionType string    `json:"type"`
+	Email           string    `json:"email,omitempty"`
 }
 
-type DepositRequestDTO struct {
-	UserId int     `json:"user_id"`
-	Amount float64 `json:"amount"`
+type StoreTransactionRequestDTO struct {
+	Amount            float64 `json:"amount"`
+	Description       string  `json:"description"`
+	TransactionTypeId uint    `json:"transaction_type_id"`
 }
 
 type WithDrawRequestDTO struct {
@@ -65,17 +99,12 @@ type ProfitRequestDTO struct {
 type TransactionHttpHandler interface {
 	Fetch(ctx echo.Context) error
 	MyTransactions(ctx echo.Context) error
-	Deposit(ctx echo.Context) error
-	WithDraw(ctx echo.Context) error
-	Profit(ctx echo.Context) error
 }
 
 type TransactionUseCase interface {
 	Fetch(ctx context.Context) ([]Transaction, error)
 	FetchByUserId(ctx context.Context, userId int) ([]Transaction, error)
-	Deposit(ctx context.Context, deposit DepositRequestDTO) error
-	WithDraw(ctx context.Context, withdraw WithDrawRequestDTO) error
-	Profit(ctx context.Context, profit ProfitRequestDTO) error
+	Store(ctx context.Context, userId uint, transaction StoreTransactionRequestDTO) error
 	GetTotalProfitByUserId(ctx context.Context, userId int) (float64, error)
 }
 

@@ -16,33 +16,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/assets/": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "asset"
-                ],
-                "summary": "Get user information",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/common.ResponseDTO"
-                        }
-                    }
-                }
-            }
-        },
         "/auth/login": {
             "post": {
                 "consumes": [
@@ -142,8 +115,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/emails/{email}/send-verification-code": {
-            "post": {
+        "/orders": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -151,42 +129,26 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "email"
+                    "order"
                 ],
-                "summary": "Send verification code to user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User email",
-                        "name": "email",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "Get orders",
                 "responses": {
                     "200": {
-                        "description": "Email verification code",
+                        "description": "ok",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/common.ResponseDTO"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "integer"
-                                        }
-                                    }
-                                }
-                            ]
+                            "type": "string"
                         }
                     }
                 }
             }
         },
-        "/emails/{email}/verify": {
+        "/orders/{id}": {
             "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -194,32 +156,68 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "email"
+                    "order"
                 ],
-                "summary": "Send verification code to user",
+                "summary": "update order",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User email",
-                        "name": "email",
+                        "description": "Order id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Email verification data",
+                        "description": "Update Order",
                         "name": "message",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.VerifyRequestDTO"
+                            "$ref": "#/definitions/domain.UpdateOrderDTO"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "true",
+                        "description": "ok",
                         "schema": {
-                            "type": "bool"
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/{id}/accept": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Get plans",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -266,7 +264,7 @@ const docTemplate = `{
                 "tags": [
                     "plan"
                 ],
-                "summary": "Add new plan",
+                "summary": "Create a plan",
                 "parameters": [
                     {
                         "description": "User credentials",
@@ -288,8 +286,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/plans/me/": {
-            "get": {
+        "/plans/:id/": {
+            "put": {
                 "security": [
                     {
                         "ApiKeyAuth": []
@@ -304,7 +302,32 @@ const docTemplate = `{
                 "tags": [
                     "plan"
                 ],
-                "summary": "get my plan",
+                "summary": "get a plan",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.ResponseDTO"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "plan"
+                ],
+                "summary": "Delete a plan",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -342,33 +365,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/profiles/me/": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "profile"
-                ],
-                "summary": "get my profile",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/common.ResponseDTO"
-                        }
-                    }
-                }
-            }
-        },
         "/profiles/{id}/": {
             "get": {
                 "security": [
@@ -385,7 +381,7 @@ const docTemplate = `{
                 "tags": [
                     "profile"
                 ],
-                "summary": "get profile by id",
+                "summary": "Get a profile",
                 "parameters": [
                     {
                         "type": "integer",
@@ -419,7 +415,7 @@ const docTemplate = `{
                 "tags": [
                     "profile"
                 ],
-                "summary": "update profile",
+                "summary": "Update a profile",
                 "parameters": [
                     {
                         "type": "integer",
@@ -448,7 +444,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/transactions/": {
+        "/user": {
             "get": {
                 "security": [
                     {
@@ -462,58 +458,32 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "transaction"
+                    "user"
                 ],
-                "summary": "Get user information",
+                "summary": "Get authenticated user",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/common.ResponseDTO"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.ResponseDTO"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.UserResponseDTO"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
             }
         },
-        "/transactions/deposit": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "transaction"
-                ],
-                "summary": "create deposit transaction",
-                "parameters": [
-                    {
-                        "description": "Registration data",
-                        "name": "message",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.DepositRequestDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/common.ResponseDTO"
-                        }
-                    }
-                }
-            }
-        },
-        "/transactions/me": {
+        "/user/asset": {
             "get": {
                 "security": [
                     {
@@ -527,9 +497,10 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "transaction"
+                    "asset",
+                    "user"
                 ],
-                "summary": "Get user information",
+                "summary": "Get authenticated user asset",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -540,7 +511,90 @@ const docTemplate = `{
                 }
             }
         },
-        "/transactions/withdraw": {
+        "/user/email/{email}/send-verification-code": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Send verification code to user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User email",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Email verification code",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.ResponseDTO"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/user/email/{email}/verify": {
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Send verification code to user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User email",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Email verification data",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.VerifyRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "true",
+                        "schema": {
+                            "type": "bool"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/orders": {
             "post": {
                 "security": [
                     {
@@ -554,20 +608,146 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "transaction"
+                    "order"
                 ],
-                "summary": "create withdraw transaction",
+                "summary": "Create an order for authenticated user",
                 "parameters": [
                     {
-                        "description": "Withdraw data",
+                        "description": "Store Order",
                         "name": "message",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.WithDrawRequestDTO"
+                            "$ref": "#/definitions/domain.StoreForAuthenticateUserDTO"
                         }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/orders/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order",
+                    "user"
+                ],
+                "summary": "Get authenticated user orders",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/plans": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user",
+                    "plan"
+                ],
+                "summary": "Get authenticated user plans",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.ResponseDTO"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.GetMyPlansDTO"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/user/profile/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "profile"
+                ],
+                "summary": "Get authenticated user profile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.ResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/transactions": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transaction",
+                    "user"
+                ],
+                "summary": "Get authenticated user transactions",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -594,7 +774,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Add new user",
+                "summary": "Get users",
                 "responses": {
                     "200": {
                         "description": "ok",
@@ -605,7 +785,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/me": {
+        "/users/:id/orders/": {
             "get": {
                 "security": [
                     {
@@ -619,32 +799,21 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
+                    "order",
                     "user"
                 ],
-                "summary": "Get user information",
+                "summary": "Get a user's order",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "ok",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/common.ResponseDTO"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.UserResponseDTO"
-                                        }
-                                    }
-                                }
-                            ]
+                            "type": "string"
                         }
                     }
                 }
             }
         },
-        "/users/plans/me": {
+        "/users/plans/": {
             "get": {
                 "security": [
                     {
@@ -658,29 +827,278 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user's plan"
+                    "plan",
+                    "user"
                 ],
-                "summary": "Get user plans",
+                "summary": "get user's plans",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "plan",
+                    "user"
+                ],
+                "summary": "Create plan for user",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/plans/:id/requests/": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "request",
+                    "user",
+                    "plan"
+                ],
+                "summary": "Create request for plan",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/plans/:id/transactions": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transaction",
+                    "user",
+                    "plan"
+                ],
+                "summary": "Get a plan's transactions",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/plans/requests/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "request",
+                    "user",
+                    "plan"
+                ],
+                "summary": "Get plan's requests",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/plans/requests/:id/accept": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "request",
+                    "user",
+                    "plan"
+                ],
+                "summary": "Accept a plan's request",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/plans/requests/:id/reject": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "request",
+                    "user",
+                    "plan"
+                ],
+                "summary": "Reject a plan's request",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/plans/{plan_id}/transactions": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transaction",
+                    "plan",
+                    "user"
+                ],
+                "summary": "Create transaction for a plan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Plan id",
+                        "name": "plan_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "payload",
+                        "name": "message",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/domain.StoreUserPlanTransactionDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/transactions": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transaction",
+                    "user"
+                ],
+                "summary": "Create a transaction for a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Create transaction",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.StoreTransactionRequestDTO"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/common.ResponseDTO"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.GetMyPlansDTO"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/common.ResponseDTO"
                         }
                     }
                 }
@@ -700,9 +1118,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "transaction"
                 ],
-                "summary": "Get user information",
+                "summary": "Get a user's transactions",
                 "parameters": [
                     {
                         "type": "string",
@@ -733,17 +1151,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.DepositRequestDTO": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
         "domain.GetMyPlansDTO": {
             "type": "object",
             "properties": {
@@ -766,7 +1173,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "title": {
                     "type": "string"
@@ -871,6 +1278,56 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.StoreForAuthenticateUserDTO": {
+            "type": "object",
+            "properties": {
+                "plan_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.StoreTransactionRequestDTO": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "transaction_type_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.StoreUserPlanTransactionDTO": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "transactionTypeID": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "userPlanID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.UpdateOrderDTO": {
+            "type": "object",
+            "properties": {
+                "status_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.UpdateProfileRequestDTO": {
             "type": "object",
             "properties": {
@@ -915,17 +1372,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "integer"
-                }
-            }
-        },
-        "domain.WithDrawRequestDTO": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "user_id": {
                     "type": "integer"
                 }
             }

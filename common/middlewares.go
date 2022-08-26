@@ -35,8 +35,8 @@ func CASBINMiddleWare() echo.MiddlewareFunc {
 	return casbin_mw.MiddlewareWithConfig(casbin_mw.Config{
 		Enforcer: ce,
 		UserGetter: func(c echo.Context) (string, error) {
-			role := c.Get("role").(string)
-			return role, nil
+			//role := c.Get("role").(uint)
+			return "MEMBER", nil
 		},
 	})
 }

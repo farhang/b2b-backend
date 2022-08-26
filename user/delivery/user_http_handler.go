@@ -21,13 +21,13 @@ func (uh *UserHttpHandler) DepositToUserPlan(ctx echo.Context) error {
 
 // VerifyEmail godoc
 // @Summary  Send verification code to user
-// @Tags      email
+// @Tags      user
 // @Accept    json
 // @Produce   json
 // @Param    email    path    string                   true  "User email"
 // @Param    message  body    domain.VerifyRequestDTO  true  "Email verification data"
 // @Success  200      {bool}  bool                     "true"
-// @Router   /emails/{email}/verify [patch]
+// @Router   /user/email/{email}/verify [patch]
 func (uh *UserHttpHandler) VerifyEmail(ctx echo.Context) error {
 	c := ctx.Request().Context()
 	var p domain.VerifyRequestDTO
@@ -54,7 +54,7 @@ func (uh *UserHttpHandler) VerifyEmail(ctx echo.Context) error {
 }
 
 // FetchUsers Store godoc
-// @Summary  Add new user
+// @Summary  Get users
 // @Tags     user
 // @Accept   json
 // @Produce  json
@@ -77,26 +77,6 @@ func (uh *UserHttpHandler) FetchUsers(c echo.Context) error {
 	})
 }
 
-// Store godoc
-// @Summary  Add new user
-// @Tags     user
-// @Accept   json
-// @Produce  json
-// @Success  200  {string}  string  "ok"
-// @Router   /users [post]
-//func (uh *UserHttpHandler) Store(c echo.Context) error {
-//	var ctx = c.Request().Context()
-//	user := domain.StoreUserRequestDTO{}
-//	err := c.Bind(&user)
-//	err = uh.UserUseCase.Store(ctx, user)
-//
-//	if err != nil {
-//		return err
-//	}
-//
-//	return c.JSON(http.StatusCreated, "ok")
-//}
-
 func (uh *UserHttpHandler) GetById(ctx echo.Context) error {
 	var c = ctx.Request().Context()
 	id, _ := strconv.Atoi(ctx.Param("id"))
@@ -108,13 +88,13 @@ func (uh *UserHttpHandler) GetById(ctx echo.Context) error {
 }
 
 // GetMe godoc
-// @Summary   Get user information
+// @Summary  Get authenticated user
 // @Tags     user
 // @Accept   json
 // @Produce  json
-// @Security  ApiKeyAuth
+// @Security ApiKeyAuth
 // @Success  200  {object} common.ResponseDTO{data=domain.UserResponseDTO}
-// @Router    /users/me [get]
+// @Router    /user [get]
 func (uh *UserHttpHandler) GetMe(ctx echo.Context) error {
 	c := ctx.Request().Context()
 	id := ctx.Get("userID").(int)
@@ -133,13 +113,13 @@ func (uh *UserHttpHandler) GetMe(ctx echo.Context) error {
 }
 
 // GetMyPlans godoc
-// @Summary   Get user plans
-// @Tags     user's plan
+// @Summary  Get authenticated user plans
+// @Tags     user,plan
 // @Accept   json
 // @Produce  json
 // @Security  ApiKeyAuth
 // @Success  200  {object} common.ResponseDTO{data=[]domain.GetMyPlansDTO}
-// @Router    /users/plans/me [get]
+// @Router    /user/plans [get]
 func (uh *UserHttpHandler) GetMyPlans(ctx echo.Context) error {
 	var c = ctx.Request().Context()
 	id := ctx.Get("userID").(int)
@@ -157,7 +137,7 @@ func (uh *UserHttpHandler) GetMyPlans(ctx echo.Context) error {
 			Description:   p[i].Plan.Description,
 			ProfitPercent: p[i].Plan.ProfitPercent,
 			Amount:        p[i].Amount,
-			Status:        p[i].Status,
+			Status:        p[i].UserPlanStatus.Name,
 		}
 	}
 
@@ -169,12 +149,12 @@ func (uh *UserHttpHandler) GetMyPlans(ctx echo.Context) error {
 
 // SendEmailVerificationCode godoc
 // @Summary  Send verification code to user
-// @Tags     email
+// @Tags     user
 // @Accept   json
 // @Produce  json
 // @Param    email  path      string                        true  "User email"
 // @success  200    {object}  common.ResponseDTO{data=int}  "Email verification code"
-// @Router  /emails/{email}/send-verification-code [post]
+// @Router  /user/email/{email}/send-verification-code [post]
 func (uh *UserHttpHandler) SendEmailVerificationCode(ctx echo.Context) error {
 	c := ctx.Request().Context()
 	email := ctx.Param("email")
@@ -202,7 +182,7 @@ func NewUserHttpHandler(echo *echo.Echo, userUseCase domain.UserUseCase, pu doma
 	ug := echo.Group("users", common.AuthMiddleWare(), common.CASBINMiddleWare())
 	ug.GET("/plans/me", handler.GetMyPlans)
 	ug.GET("/", handler.FetchUsers)
-	ug.GET("/me", handler.GetMe)
+	echo.GET("/user", handler.GetMe, common.AuthMiddleWare())
 	eg := echo.Group("emails/:email/")
 	eg.PATCH("verify", handler.VerifyEmail)
 	eg.POST("send-verification-code", handler.SendEmailVerificationCode)

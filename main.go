@@ -9,6 +9,10 @@ import (
 	"backend-core/common"
 	"backend-core/docs"
 	"backend-core/domain"
+	orderHttpHandler "backend-core/order/delivery"
+	orderRepository "backend-core/order/repository"
+	orderUseCase "backend-core/order/usecase"
+	planRequestRepository "backend-core/plan-request/repository"
 	planHandler "backend-core/plan/delivery"
 	planGormRepository "backend-core/plan/repository"
 	planGormUseCase "backend-core/plan/usecase"
@@ -18,6 +22,8 @@ import (
 	transactionHandler "backend-core/transaction/delivery"
 	transactionRepository "backend-core/transaction/repository"
 	transactionUseCase "backend-core/transaction/usecase"
+	userPlanRepository "backend-core/user-plan/repository"
+	userPlanUseCase "backend-core/user-plan/usecase"
 	userHttpHandler "backend-core/user/delivery"
 	userGormRepository "backend-core/user/repository"
 	userUseCase "backend-core/user/usecase"
@@ -28,10 +34,11 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/swaggo/echo-swagger"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"log/syslog"
 	"net/http"
 	"os"
 )
@@ -97,9 +104,9 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 // @name                        Authorization
 // @description                 Description for what is this security definition being used
 func main() {
-	//w, err := syslog.Dial("udp", "logs5.papertrailapp.com:19181", syslog.LOG_EMERG|syslog.LOG_KERN, "myapp")
+	w, err := syslog.Dial("udp", "logs5.papertrailapp.com:19181", syslog.LOG_EMERG|syslog.LOG_KERN, "myapp")
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	wr := zerolog.MultiLevelWriter(zerolog.ConsoleWriter{Out: os.Stdout})
+	wr := zerolog.MultiLevelWriter(zerolog.ConsoleWriter{Out: os.Stdout}, w)
 	log.Logger = zerolog.New(wr)
 
 	//if err != nil {
@@ -122,8 +129,9 @@ func main() {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
-	err = db.AutoMigrate(&domain.User{}, domain.EmailVerification{}, domain.Profile{}, domain.ProfilePlan{})
-	err = db.AutoMigrate(&domain.Asset{}, domain.Plan{}, domain.Transaction{})
+	err = db.AutoMigrate(&domain.User{}, domain.EmailVerification{}, domain.Profile{}, domain.UserPlan{})
+	err = db.AutoMigrate(&domain.Asset{}, domain.Plan{}, domain.Transaction{}, &domain.UserRole{})
+	err = db.AutoMigrate(&domain.UserPlanTransaction{}, domain.Order{}, domain.PlanRequest{}, &domain.OrderStatus{}, &domain.RequestStatus{}, &domain.Request{}, domain.TransactionType{})
 
 	if err != nil {
 		log.Error().Err(err)
@@ -135,20 +143,21 @@ func main() {
 
 	e := echo.New()
 	e.HTTPErrorHandler = customHTTPErrorHandler
-	e.Use(common.CORSMiddleWare())
+	e.Use(common.CORSMiddleWare(), middleware.RequestID())
 
-	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
-		LogURI:    true,
-		LogStatus: true,
-		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
-			log.Info().
-				Str("URI", v.URI).
-				Int("status", v.Status).
-				Str("method", v.Method).
-				Msg("request")
-			return nil
-		},
-	}))
+	//e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+	//	LogURI:    true,
+	//	LogStatus: true,
+	//	LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+	//		log.Info().
+	//			Str("URI", v.URI).
+	//			Int("status", v.Status).
+	//			Str("method", v.Method).
+	//			Str("request-id", v.RequestID).
+	//			Msg("plan-request")
+	//		return nil
+	//	},
+	//}))
 
 	docs.SwaggerInfo.Host = os.Getenv("BASE_URL")
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
@@ -158,6 +167,9 @@ func main() {
 	usrRepository := userGormRepository.NewGormUserRepository(db)
 	transRepository := transactionRepository.NewTransactionRepository(db)
 	plnRepository := planGormRepository.NewPlanGormRepository(db)
+	usrplnRepository := userPlanRepository.NewUserPlanRepository(db)
+	ordrRespository := orderRepository.NewOrderRepository(db)
+	planRequestRepository.NewPlanRequestRepository(db)
 
 	profUseCase := profileUseCase.NewProfileUseCase(profRepository)
 	asstUseCase := assetUseCase.NewAssetUseCase(asstRepository)
@@ -165,6 +177,8 @@ func main() {
 	plnUseCase := planGormUseCase.NewPlanUseCase(plnRepository)
 	transUseCase := transactionUseCase.NewTransactionUseCase(transRepository, usrUseCase, asstUseCase, db)
 	athUseCase := authJwtUseCase.NewJwtAuthUseCase(usrUseCase)
+	usrPlanUseCase := userPlanUseCase.NewUserPlanUseCase(usrplnRepository)
+	ordrUseCase := orderUseCase.NewOrderUseCase(ordrRespository, usrPlanUseCase)
 
 	profileUseHandler.NewProfileHttpHandler(e, profUseCase, usrUseCase)
 	userHttpHandler.NewUserHttpHandler(e, usrUseCase, plnUseCase)
@@ -172,6 +186,7 @@ func main() {
 	assetHandler.NewAssetHttpHandler(e, asstUseCase, transUseCase)
 	planHandler.NewPlanHttpHandler(e, plnUseCase)
 	authJwtHttpHandler.NewAuthHttpHandler(e, athUseCase)
+	orderHttpHandler.NewOrderHttpHandler(e, ordrUseCase)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

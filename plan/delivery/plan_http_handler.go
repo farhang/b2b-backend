@@ -11,14 +11,30 @@ type PlanHttpHandler struct {
 	pu domain.PlanUseCase
 }
 
-// GetMyPlan godoc
-// @Summary   get my plan
+// UpdatePlan godoc
+// @Summary   get a plan
 // @Tags     plan
 // @Accept   json
 // @Produce  json
 // @Security  ApiKeyAuth
-// @Router   /plans/me/ [get]
+// @Router   /plans/:id/ [put]
 // @Success  200  {object} common.ResponseDTO
+func UpdatePlan() {
+
+}
+
+// DeletePlan godoc
+// @Summary  Delete a plan
+// @Tags     plan
+// @Accept   json
+// @Produce  json
+// @Security  ApiKeyAuth
+// @Router   /plans/:id/ [delete]
+// @Success  200  {object} common.ResponseDTO
+func DeletePlan() {
+
+}
+
 func (ph *PlanHttpHandler) GetMyPlan(ctx echo.Context) error {
 	var c = ctx.Request().Context()
 	id := ctx.Get("userID").(int)
@@ -71,7 +87,7 @@ func (ph *PlanHttpHandler) Fetch(ctx echo.Context) error {
 }
 
 // Store godoc
-// @Summary   Add new plan
+// @Summary  Create a plan
 // @Tags     plan
 // @Accept   json
 // @Produce  json

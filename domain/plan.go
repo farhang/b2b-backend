@@ -8,11 +8,12 @@ import (
 
 type Plan struct {
 	gorm.Model
-	Title         string
-	Description   string
-	ProfitPercent int
-	Duration      int
-	Profiles      []ProfilePlan
+	Title             string
+	Description       string
+	ProfitPercent     int
+	ProfitDescription string
+	Duration          int
+	Users             []UserPlan
 }
 
 type PlanStoreRequestDTO struct {
@@ -21,6 +22,7 @@ type PlanStoreRequestDTO struct {
 	ProfitPercent int    `json:"profit_percent"`
 	Duration      int    `json:"duration"`
 }
+
 type PlanResponseDTO struct {
 	ID            uint   `json:"id"`
 	Title         string `json:"title"`
@@ -31,24 +33,24 @@ type PlanResponseDTO struct {
 
 type GetMyPlansDTO struct {
 	ID            uint   `json:"id"`
-	PlanId        int    `json:"plan_id"`
+	PlanId        uint   `json:"plan_id"`
 	Title         string `json:"title"`
 	Description   string `json:"description"`
 	ProfitPercent int    `json:"profit"`
 	Duration      int    `json:"duration"`
 	Amount        int    `json:"amount"`
-	Status        int    `json:"status"`
+	Status        string `json:"status"`
 }
 
 type PlanUseCase interface {
-	GetByUserId(ctx context.Context, id int) ([]ProfilePlan, error)
+	GetByUserId(ctx context.Context, id int) ([]UserPlan, error)
 	Fetch(ctx context.Context) ([]Plan, error)
 	Store(ctx context.Context, plan PlanStoreRequestDTO) error
 	Delete(ctx context.Context) error
 }
 
 type PlanRepository interface {
-	GetByUserId(ctx context.Context, id int) ([]ProfilePlan, error)
+	GetByUserId(ctx context.Context, id int) ([]UserPlan, error)
 	Fetch(ctx context.Context) ([]Plan, error)
 	Store(ctx context.Context, plan Plan) error
 	Delete(ctx context.Context) error

@@ -2,26 +2,24 @@ package domain
 
 import (
 	"context"
-	"database/sql/driver"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 	"time"
 )
 
-type Role string
-
 const (
-	ADMIN  Role = "ADMIN"
-	MEMBER Role = "MEMBER"
+	ADMIN  string = "ADMIN"
+	MEMBER string = "MEMBER"
 )
 
-func (tt *Role) Scan(value interface{}) error {
-	*tt = Role(value.(string))
-	return nil
+type UserRole struct {
+	ID   uint
+	Name string
 }
 
-func (tt Role) Value() (driver.Value, error) {
-	return string(tt), nil
+var UserRoles = []UserRole{
+	{ID: 1, Name: ADMIN},
+	{ID: 2, Name: MEMBER},
 }
 
 type User struct {
@@ -29,7 +27,8 @@ type User struct {
 	Password        string
 	Email           string
 	IsEmailVerified bool `gorm:"default:true"`
-	Role            Role `sql:"role"`
+	Role            UserRole
+	RoleID          uint
 	IsActive        bool `gorm:"default:true"`
 }
 

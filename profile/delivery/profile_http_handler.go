@@ -15,7 +15,7 @@ type ProfileHandler struct {
 }
 
 // GetById godoc
-// @Summary   get profile by id
+// @Summary   Get a profile
 // @Tags     profile
 // @Accept   json
 // @Produce  json
@@ -37,9 +37,8 @@ func (ph ProfileHandler) GetById(ctx echo.Context) error {
 	}
 
 	profileResponse := domain.ProfileResponseDTO{
-		ID:     p.ID,
-		UserID: p.UserID,
-		//PlanId:              p.PlanId,
+		ID:                  p.ID,
+		UserID:              p.UserID,
 		Name:                p.Name,
 		LastName:            p.LastName,
 		MobileNumber:        p.MobileNumber,
@@ -59,13 +58,13 @@ func (ph ProfileHandler) GetById(ctx echo.Context) error {
 }
 
 // GetMyProfile godoc
-// @Summary   get my profile
+// @Summary  Get authenticated user profile
 // @Tags     profile
 // @Accept   json
 // @Produce  json
 // @Security  ApiKeyAuth
 // @Success  200  {object} common.ResponseDTO
-// @Router    /profiles/me/ [get]
+// @Router    /user/profile/ [get]
 func (ph ProfileHandler) GetMyProfile(ctx echo.Context) error {
 	var c = ctx.Request().Context()
 	id := ctx.Get("userID").(int)
@@ -127,7 +126,7 @@ func (ph ProfileHandler) Fetch(ctx echo.Context) error {
 }
 
 // Update godoc
-// @Summary  update profile
+// @Summary  Update a profile
 // @Tags     profile
 // @Accept   json
 // @Produce  json

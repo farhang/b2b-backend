@@ -3,6 +3,7 @@ package repository
 import (
 	"backend-core/domain"
 	"context"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
 
@@ -21,7 +22,7 @@ func (t TransactionRepository) FetchByUserId(ctx context.Context, userId int) ([
 }
 func (t TransactionRepository) GetTotalProfitByUserId(ctx context.Context, userId int) (float64, error) {
 	var amount float64
-	err := t.db.WithContext(ctx).Raw("SELECT SUM(amount) FROM transactions WHERE user_id = ? AND transaction_type = ?", userId, domain.PROFIT).Scan(&amount).Error
+	err := t.db.WithContext(ctx).Raw("SELECT SUM(amount) FROM transactions WHERE user_id = ? AND transaction_type = ?", userId, domain.RialDeposit).Scan(&amount).Error
 	return amount, err
 }
 
@@ -33,5 +34,14 @@ func (t TransactionRepository) Fetch(ctx context.Context) ([]domain.Transaction,
 
 func NewTransactionRepository(db *gorm.DB) domain.TransactionRepository {
 	db.Exec("DROP TYPE IF EXISTS transaction_type;CREATE TYPE transaction_type AS ENUM ('WITHDRAW', 'DEPOSIT', 'PROFIT');")
+	var result int64
+	db.Table("transaction_types").Count(&result)
+	if result == 0 {
+		err := db.Create(domain.TransactionTypes).Error
+		if err != nil {
+			log.Error().Err(err)
+		}
+	}
+
 	return &TransactionRepository{db}
 }

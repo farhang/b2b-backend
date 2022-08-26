@@ -14,13 +14,13 @@ type assetHttpHandler struct {
 }
 
 // GetByUserId
-// @Summary   Get user information
-// @Tags     asset
+// @Summary  Get authenticated user asset
+// @Tags     asset,user
 // @Accept   json
 // @Produce  json
 // @Security  ApiKeyAuth
 // @Success  200  {object} common.ResponseDTO
-// @Router    /assets/ [get]
+// @Router    /user/asset [get]
 func (a assetHttpHandler) GetByUserId(ctx echo.Context) error {
 	c := ctx.Request().Context()
 	uid := ctx.Get("userID").(int)
@@ -39,6 +39,6 @@ func (a assetHttpHandler) GetByUserId(ctx echo.Context) error {
 
 func NewAssetHttpHandler(e *echo.Echo, au domain.AssetUseCase, tu domain.TransactionUseCase) domain.AssetDelivery {
 	handler := &assetHttpHandler{e, au, tu}
-	e.GET("/assets/", handler.GetByUserId, common.AuthMiddleWare())
+	e.GET("/user/asset", handler.GetByUserId, common.AuthMiddleWare())
 	return handler
 }

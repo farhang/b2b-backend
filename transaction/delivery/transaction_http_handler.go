@@ -3,7 +3,6 @@ package delivery
 import (
 	"backend-core/common"
 	"backend-core/domain"
-	"errors"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
@@ -13,26 +12,46 @@ type TransactionHttpHandler struct {
 	tu domain.TransactionUseCase
 }
 
-// Fetch godoc
-// @Summary   Get user information
-// @Tags     transaction
+// Store godoc
+// @Summary  Create a transaction for a user
+// @Tags     transaction,user
 // @Accept   json
 // @Produce  json
 // @Security  ApiKeyAuth
+// @Param    id    path    string true "id"
+// @Param    message  body      domain.StoreTransactionRequestDTO true  "Create transaction"
 // @Success  200  {object} common.ResponseDTO
-// @Router    /transactions/ [get]
-func (j *TransactionHttpHandler) Fetch(ctx echo.Context) error {
+// @Router    /users/{id}/transactions [post]
+func (t *TransactionHttpHandler) Store(ctx echo.Context) error {
+	p := domain.StoreTransactionRequestDTO{}
+	userId, _ := strconv.Atoi(ctx.Param("id"))
+	c := ctx.Request().Context()
+	if err := ctx.Bind(&p); err != nil {
+		return err
+	}
+
+	err := t.tu.Store(c, uint(userId), p)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(http.StatusCreated, common.ResponseDTO{
+		Message: http.StatusText(http.StatusOK),
+	})
+}
+
+func (t *TransactionHttpHandler) Fetch(ctx echo.Context) error {
 	c := ctx.Request().Context()
 
-	transactions, err := j.tu.Fetch(c)
+	transactions, err := t.tu.Fetch(c)
 
 	transactionsResponse := make([]domain.TransactionResponseDTO, len(transactions))
 	for i := range transactions {
 		transactionsResponse[i] = domain.TransactionResponseDTO{
-			CreatedAt:       transactions[i].CreatedAt,
-			TransactionType: transactions[i].TransactionType,
-			Amount:          transactions[i].Amount,
-			Email:           transactions[i].User.Email,
+			CreatedAt: transactions[i].CreatedAt,
+			Amount:    transactions[i].Amount,
+			Email:     transactions[i].User.Email,
 		}
 	}
 
@@ -45,24 +64,23 @@ func (j *TransactionHttpHandler) Fetch(ctx echo.Context) error {
 }
 
 // MyTransactions godoc
-// @Summary   Get user information
-// @Tags     transaction
+// @Summary  Get authenticated user transactions
+// @Tags     transaction,user
 // @Accept   json
 // @Produce  json
 // @Security  ApiKeyAuth
 // @Success  200  {object} common.ResponseDTO
-// @Router    /transactions/me [get]
-func (j *TransactionHttpHandler) MyTransactions(ctx echo.Context) error {
+// @Router    /user/transactions [get]
+func (t *TransactionHttpHandler) MyTransactions(ctx echo.Context) error {
 	c := ctx.Request().Context()
 	uid := ctx.Get("userID").(int)
-	transactions, err := j.tu.FetchByUserId(c, uid)
+	transactions, err := t.tu.FetchByUserId(c, uid)
 
 	transactionsResponse := make([]domain.TransactionResponseDTO, len(transactions))
 	for i := range transactions {
 		transactionsResponse[i] = domain.TransactionResponseDTO{
-			CreatedAt:       transactions[i].CreatedAt,
-			TransactionType: transactions[i].TransactionType,
-			Amount:          transactions[i].Amount,
+			CreatedAt: transactions[i].CreatedAt,
+			Amount:    transactions[i].Amount,
 		}
 	}
 
@@ -74,104 +92,26 @@ func (j *TransactionHttpHandler) MyTransactions(ctx echo.Context) error {
 	})
 }
 
-// Deposit  godoc
-// @Summary  create deposit transaction
-// @Tags     transaction
-// @Accept   json
-// @Produce  json
-// @Param    message  body      domain.DepositRequestDTO true  "Registration data"
-// @Security  ApiKeyAuth
-// @Success  200      {object}  common.ResponseDTO
-// @Router   /transactions/deposit [post]
-func (j *TransactionHttpHandler) Deposit(ctx echo.Context) error {
-	c := ctx.Request().Context()
-	var p domain.DepositRequestDTO
-
-	if err := ctx.Bind(&p); err != nil {
-		return common.ErrHttpBadRequest(err)
-	}
-	err := j.tu.Deposit(c, p)
-
-	if err != nil {
-		return err
-	}
-
-	return ctx.JSON(http.StatusCreated, common.ResponseDTO{
-		Message: "the transaction is created successfully",
-	})
-}
-
-// WithDraw  godoc
-// @Summary  create withdraw transaction
-// @Tags     transaction
-// @Accept   json
-// @Produce  json
-// @Param    message  body      domain.WithDrawRequestDTO true  "Withdraw data"
-// @Security  ApiKeyAuth
-// @Success  200      {object}  common.ResponseDTO
-// @Router   /transactions/withdraw [post]
-func (j *TransactionHttpHandler) WithDraw(ctx echo.Context) error {
-	c := ctx.Request().Context()
-	var p domain.WithDrawRequestDTO
-
-	if err := ctx.Bind(&p); err != nil {
-		return common.ErrHttpBadRequest(err)
-	}
-
-	err := j.tu.WithDraw(c, p)
-
-	if errors.Is(domain.ErrNotEnoughAssetAmount, err) {
-		return common.ErrHttpBadRequest(err)
-	}
-
-	if err != nil {
-		return err
-	}
-
-	return ctx.JSON(http.StatusCreated, common.ResponseDTO{
-		Message: "the transaction is created successfully",
-	})
-}
-
-func (j *TransactionHttpHandler) Profit(ctx echo.Context) error {
-	c := ctx.Request().Context()
-	var p domain.ProfitRequestDTO
-
-	if err := ctx.Bind(&p); err != nil {
-		return common.ErrHttpBadRequest(err)
-	}
-	err := j.tu.Profit(c, p)
-
-	if err != nil {
-		return err
-	}
-
-	return ctx.JSON(http.StatusCreated, common.ResponseDTO{
-		Message: "the transaction is created successfully",
-	})
-}
-
 // FetchTransactionsByUserId godoc
-// @Summary   Get user information
-// @Tags     user
+// @Summary  Get a user's transactions
+// @Tags     transaction
 // @Accept   json
 // @Produce  json
 // @Param    id    path    string                   true  "User id"
 // @Security  ApiKeyAuth
 // @Success  200  {object} common.ResponseDTO
 // @Router    /users/{id}/transactions/ [get]
-func (j *TransactionHttpHandler) FetchTransactionsByUserId(ctx echo.Context) error {
+func (t *TransactionHttpHandler) FetchTransactionsByUserId(ctx echo.Context) error {
 	c := ctx.Request().Context()
 
 	userId, err := strconv.Atoi(ctx.Param("id"))
-	transactions, err := j.tu.FetchByUserId(c, userId)
+	transactions, err := t.tu.FetchByUserId(c, userId)
 
 	transactionsResponse := make([]domain.TransactionResponseDTO, len(transactions))
 	for i := range transactions {
 		transactionsResponse[i] = domain.TransactionResponseDTO{
-			CreatedAt:       transactions[i].CreatedAt,
-			TransactionType: transactions[i].TransactionType,
-			Amount:          transactions[i].Amount,
+			CreatedAt: transactions[i].CreatedAt,
+			Amount:    transactions[i].Amount,
 		}
 	}
 
@@ -187,12 +127,11 @@ func NewTransactionHttpHandler(e *echo.Echo, tu domain.TransactionUseCase) domai
 	handler := &TransactionHttpHandler{tu}
 
 	ug := e.Group("users", common.AuthMiddleWare(), common.CASBINMiddleWare())
-	ug.GET("/:id:/transactions/", handler.FetchTransactionsByUserId)
+	ug.GET("/:id/transactions", handler.FetchTransactionsByUserId)
+	ug.POST("/:id/transactions", handler.Store)
 	tg := e.Group("transactions", common.AuthMiddleWare(), common.CASBINMiddleWare())
-	tg.GET("/me", handler.MyTransactions)
+	tg.GET("/user/transactions", handler.MyTransactions)
 	tg.GET("/", handler.Fetch)
-	tg.POST("/deposit", handler.Deposit)
-	tg.POST("/withdraw", handler.WithDraw)
-	tg.POST("/profit", handler.Profit)
+
 	return handler
 }
