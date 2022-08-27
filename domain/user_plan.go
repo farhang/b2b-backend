@@ -50,11 +50,9 @@ type StoreUserPlanRequestDTO struct {
 }
 
 type StoreUserPlanTransactionDTO struct {
-	Amount            float64
-	TransactionTypeID uint
-	Description       string
-	UserId            uint
-	UserPlanID        uint
+	Amount            float64 `json:"amount"`
+	TransactionTypeID uint    `json:"transaction_type_id"`
+	Description       string  `json:"description"`
 }
 
 type UserPlanDelivery interface {
@@ -64,8 +62,11 @@ type UserPlanDelivery interface {
 type UserPlanRepository interface {
 	StoreTransaction(ctx context.Context, userPlanTransaction UserPlanTransaction) error
 	Store(ctx context.Context, userPlan *UserPlan) error
+	Fetch(ctx context.Context) ([]UserPlan, error)
+	GetById(ctx context.Context, id uint) (UserPlan, error)
 }
-type /**/ UserPlanUseCase interface {
+type UserPlanUseCase interface {
+	Fetch(ctx context.Context) ([]UserPlan, error)
 	Store(ctx context.Context, userPlanDTO StoreUserPlanRequestDTO) error
-	StoreTransaction(ctx context.Context, userPlanTransactionDTO StoreUserPlanTransactionDTO) error
+	StoreTransaction(ctx context.Context, userPlanTransactionDTO StoreUserPlanTransactionDTO, planId uint) error
 }

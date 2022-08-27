@@ -187,42 +187,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/orders/{id}/accept": {
-            "patch": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "order"
-                ],
-                "summary": "Get plans",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Order id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/plans/": {
             "get": {
                 "security": [
@@ -813,7 +777,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/plans/": {
+        "/users/plans": {
             "get": {
                 "security": [
                     {
@@ -839,7 +803,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/users/plans/": {
             "post": {
                 "security": [
                     {
@@ -857,35 +823,6 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "Create plan for user",
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/users/plans/:id/requests/": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "request",
-                    "user",
-                    "plan"
-                ],
-                "summary": "Create request for plan",
                 "responses": {
                     "200": {
                         "description": "ok",
@@ -925,7 +862,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/plans/requests/": {
+        "/users/plans/requests": {
             "get": {
                 "security": [
                     {
@@ -1012,6 +949,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/plans/{id}/requests": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "request",
+                    "user",
+                    "plan"
+                ],
+                "summary": "Create a request for a plan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User plan Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.StorePlanRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/users/plans/{plan_id}/transactions": {
             "post": {
                 "security": [
@@ -1053,6 +1037,34 @@ const docTemplate = `{
                         "description": "ok",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/transactions": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transaction",
+                    "user"
+                ],
+                "summary": "Get authenticated user transactions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.ResponseDTO"
                         }
                     }
                 }
@@ -1286,6 +1298,14 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.StorePlanRequest": {
+            "type": "object",
+            "properties": {
+                "request_type_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.StoreTransactionRequestDTO": {
             "type": "object",
             "properties": {
@@ -1309,13 +1329,7 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "transactionTypeID": {
-                    "type": "integer"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "userPlanID": {
+                "transaction_type_id": {
                     "type": "integer"
                 }
             }

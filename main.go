@@ -12,7 +12,9 @@ import (
 	orderHttpHandler "backend-core/order/delivery"
 	orderRepository "backend-core/order/repository"
 	orderUseCase "backend-core/order/usecase"
-	planRequestRepository "backend-core/plan-request/repository"
+	userPlanRequestHttpHandler "backend-core/plan-request/delivery"
+	userPlanRequestRepository "backend-core/plan-request/repository"
+	userPlanRequestUseCase "backend-core/plan-request/usecase"
 	planHandler "backend-core/plan/delivery"
 	planGormRepository "backend-core/plan/repository"
 	planGormUseCase "backend-core/plan/usecase"
@@ -22,6 +24,7 @@ import (
 	transactionHandler "backend-core/transaction/delivery"
 	transactionRepository "backend-core/transaction/repository"
 	transactionUseCase "backend-core/transaction/usecase"
+	userPlanHttpHnadler "backend-core/user-plan/delivery"
 	userPlanRepository "backend-core/user-plan/repository"
 	userPlanUseCase "backend-core/user-plan/usecase"
 	userHttpHandler "backend-core/user/delivery"
@@ -169,7 +172,7 @@ func main() {
 	plnRepository := planGormRepository.NewPlanGormRepository(db)
 	usrplnRepository := userPlanRepository.NewUserPlanRepository(db)
 	ordrRespository := orderRepository.NewOrderRepository(db)
-	planRequestRepository.NewPlanRequestRepository(db)
+	usrplnRequestRepository := userPlanRequestRepository.NewPlanRequestRepository(db)
 
 	profUseCase := profileUseCase.NewProfileUseCase(profRepository)
 	asstUseCase := assetUseCase.NewAssetUseCase(asstRepository)
@@ -179,6 +182,7 @@ func main() {
 	athUseCase := authJwtUseCase.NewJwtAuthUseCase(usrUseCase)
 	usrPlanUseCase := userPlanUseCase.NewUserPlanUseCase(usrplnRepository)
 	ordrUseCase := orderUseCase.NewOrderUseCase(ordrRespository, usrPlanUseCase)
+	usrplnRequestUsecae := userPlanRequestUseCase.NewPlanRequestUseCase(usrplnRequestRepository)
 
 	profileUseHandler.NewProfileHttpHandler(e, profUseCase, usrUseCase)
 	userHttpHandler.NewUserHttpHandler(e, usrUseCase, plnUseCase)
@@ -187,6 +191,8 @@ func main() {
 	planHandler.NewPlanHttpHandler(e, plnUseCase)
 	authJwtHttpHandler.NewAuthHttpHandler(e, athUseCase)
 	orderHttpHandler.NewOrderHttpHandler(e, ordrUseCase)
+	userPlanHttpHnadler.NewUserPlanDelivery(e, usrPlanUseCase)
+	userPlanRequestHttpHandler.NewPlanRequestHttpHandler(e, usrplnRequestUsecae)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

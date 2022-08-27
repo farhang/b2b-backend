@@ -41,6 +41,14 @@ func (t *TransactionHttpHandler) Store(ctx echo.Context) error {
 	})
 }
 
+// Fetch godoc
+// @Summary  Get authenticated user transactions
+// @Tags     transaction,user
+// @Accept   json
+// @Produce  json
+// @Security  ApiKeyAuth
+// @Success  200  {object} common.ResponseDTO
+// @Router    /users/transactions [get]
 func (t *TransactionHttpHandler) Fetch(ctx echo.Context) error {
 	c := ctx.Request().Context()
 
@@ -129,9 +137,8 @@ func NewTransactionHttpHandler(e *echo.Echo, tu domain.TransactionUseCase) domai
 	ug := e.Group("users", common.AuthMiddleWare(), common.CASBINMiddleWare())
 	ug.GET("/:id/transactions", handler.FetchTransactionsByUserId)
 	ug.POST("/:id/transactions", handler.Store)
-	tg := e.Group("transactions", common.AuthMiddleWare(), common.CASBINMiddleWare())
-	tg.GET("/user/transactions", handler.MyTransactions)
-	tg.GET("/", handler.Fetch)
+	e.GET("/user/transactions", handler.MyTransactions, common.AuthMiddleWare())
+	e.GET("/users/transactions", handler.Fetch)
 
 	return handler
 }

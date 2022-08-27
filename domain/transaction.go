@@ -65,14 +65,6 @@ type Transaction struct {
 	UserId            uint
 }
 
-type UserPlanTransaction struct {
-	gorm.Model
-	Transaction   Transaction
-	TransactionID uint
-	UserPlan      UserPlan
-	UserPlanID    uint
-}
-
 type TransactionResponseDTO struct {
 	CreatedAt       time.Time `json:"created_at"`
 	Amount          float64   `json:"amount"`

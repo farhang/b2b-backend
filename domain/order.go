@@ -50,6 +50,7 @@ type StoreOrderDTO struct {
 	PlanID uint
 	UserID uint
 }
+
 type UpdateOrderDTO struct {
 	OrderStatusId uint `json:"status_id"`
 }

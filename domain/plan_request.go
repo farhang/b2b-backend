@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -26,10 +27,10 @@ var RequestTypes = []RequestType{
 	{ID: 2, Name: PlanRenewal},
 }
 
-var RequestStatuses = []RequestType{
+var RequestStatuses = []RequestStatus{
 	{ID: 1, Name: Processing},
 	{ID: 2, Name: Accepted},
-	{ID: 2, Name: Rejected},
+	{ID: 3, Name: Rejected},
 }
 
 type RequestStatus struct {
@@ -39,8 +40,8 @@ type RequestStatus struct {
 
 type Request struct {
 	gorm.Model
-	Type            RequestType
-	TypeID          uint
+	RequestType     RequestType
+	RequestTypeID   uint
 	RequestStatus   RequestStatus
 	RequestStatusID uint
 }
@@ -52,13 +53,25 @@ type PlanRequest struct {
 	UserPlan   UserPlan
 	UserPlanID uint
 }
+type StorePlanRequest struct {
+	RequestTypeID uint `json:"request_type_id"`
+}
+type StorePlanRequestUseCaseDTO struct {
+	UserPlanId    uint
+	RequestTypeID uint
+}
 
 type PlanRequestDelivery interface {
 	Fetch(ctx echo.Context) error
 	Store(ctx echo.Context) error
-	Accept(ctx echo.Context) error
-	Reject(ctx echo.Context) error
+}
+
+type PlanRequestUseCase interface {
+	Store(ctx context.Context, request StorePlanRequestUseCaseDTO) error
+	Fetch(ctx context.Context) ([]PlanRequest, error)
 }
 
 type PlanRequestRepository interface {
+	Store(ctx context.Context, request PlanRequest) error
+	Fetch(ctx context.Context) ([]PlanRequest, error)
 }

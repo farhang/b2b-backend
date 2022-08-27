@@ -10,6 +10,10 @@ type userPlanUseCase struct {
 	upr domain.UserPlanRepository
 }
 
+func (up userPlanUseCase) Fetch(ctx context.Context) ([]domain.UserPlan, error) {
+	return up.upr.Fetch(ctx)
+}
+
 func (up userPlanUseCase) Store(ctx context.Context, userPlanDTO domain.StoreUserPlanRequestDTO) error {
 	userPlan := &domain.UserPlan{
 		UserID:           userPlanDTO.UserID,
@@ -22,17 +26,19 @@ func (up userPlanUseCase) Store(ctx context.Context, userPlanDTO domain.StoreUse
 	return up.upr.Store(ctx, userPlan)
 }
 
-func (up userPlanUseCase) StoreTransaction(ctx context.Context, userPlanTransactionDTO domain.StoreUserPlanTransactionDTO) error {
+func (up userPlanUseCase) StoreTransaction(ctx context.Context, userPlanTransactionDTO domain.StoreUserPlanTransactionDTO, planId uint) error {
+	userPlan, err := up.upr.GetById(ctx, planId)
+	if err != nil {
+		return err
+	}
 	userPlanTransaction := domain.UserPlanTransaction{
 		Transaction: domain.Transaction{
-			Amount:            0,
-			TransactionTypeID: 0,
-			Description:       "",
-			UserId:            0,
+			Amount:            userPlanTransactionDTO.Amount,
+			TransactionTypeID: userPlanTransactionDTO.TransactionTypeID,
+			Description:       userPlanTransactionDTO.Description,
+			UserId:            userPlan.UserID,
 		},
-		TransactionID: 0,
-		UserPlan:      domain.UserPlan{},
-		UserPlanID:    0,
+		UserPlanID: planId,
 	}
 
 	return up.upr.StoreTransaction(ctx, userPlanTransaction)
