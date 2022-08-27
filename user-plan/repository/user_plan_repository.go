@@ -14,7 +14,7 @@ type UserPlanRepository struct {
 
 func (upr *UserPlanRepository) Update(ctx context.Context, plan domain.UpdateUserPlanDTO, id uint) error {
 	var userPlan domain.UserPlan
-	err := upr.db.WithContext(ctx).First(&userPlan).Error
+	err := upr.db.WithContext(ctx).First(&userPlan, id).Error
 	if err != nil {
 		return err
 	}

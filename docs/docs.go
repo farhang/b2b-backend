@@ -923,7 +923,6 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "transaction",
                     "user",
                     "plan"
                 ],
