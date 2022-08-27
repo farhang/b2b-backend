@@ -891,8 +891,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/plans/requests/:id/accept": {
-            "put": {
+        "/users/plans/requests/{id}": {
+            "patch": {
                 "security": [
                     {
                         "ApiKeyAuth": []
@@ -909,36 +909,25 @@ const docTemplate = `{
                     "user",
                     "plan"
                 ],
-                "summary": "Accept a plan's request",
-                "responses": {
-                    "200": {
-                        "description": "ok",
+                "summary": "Create a request for a plan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User plan Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/domain.UpdatePlanRequestDTO"
                         }
                     }
-                }
-            }
-        },
-        "/users/plans/requests/:id/reject": {
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
                 ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "request",
-                    "user",
-                    "plan"
-                ],
-                "summary": "Reject a plan's request",
                 "responses": {
                     "200": {
                         "description": "ok",
@@ -1338,6 +1327,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "status_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.UpdatePlanRequestDTO": {
+            "type": "object",
+            "properties": {
+                "requestStatusID": {
                     "type": "integer"
                 }
             }

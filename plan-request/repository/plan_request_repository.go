@@ -17,6 +17,16 @@ func (p PlanRequestRepository) Fetch(ctx context.Context) ([]domain.PlanRequest,
 	err := p.db.WithContext(ctx).Preload(clause.Associations).Find(&planRequests).Error
 	return planRequests, err
 }
+
+func (p PlanRequestRepository) GetById(ctx context.Context, id uint) (domain.PlanRequest, error) {
+	var planRequest domain.PlanRequest
+	err := p.db.WithContext(ctx).Preload("Request").First(&planRequest, id).Error
+	return planRequest, err
+}
+
+func (p PlanRequestRepository) Update(ctx context.Context, request *domain.PlanRequest) error {
+	return p.db.WithContext(ctx).Model(domain.Request{}).Where("id = ?", request.RequestID).Update("request_status_id", request.Request.RequestStatusID).Error
+}
 func (p PlanRequestRepository) Store(ctx context.Context, request domain.PlanRequest) error {
 	return p.db.WithContext(ctx).Create(&request).Error
 }

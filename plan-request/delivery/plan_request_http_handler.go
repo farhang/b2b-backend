@@ -30,6 +30,38 @@ func (r RequestHttpHandler) Fetch(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, planRequests)
 }
 
+// Update godoc
+// @Summary  Create a request for a plan
+// @Tags     request,user,plan
+// @Security  ApiKeyAuth
+// @Accept   json
+// @Produce  json
+// @Success   200  {string}  string  "ok"
+// @Param    id    path    string                   true  "User plan Id"
+// @Param    message  body      domain.UpdatePlanRequestDTO  true  "Data"
+// @Router   /users/plans/requests/{id} [patch]
+func (r RequestHttpHandler) Update(ctx echo.Context) error {
+	c := ctx.Request().Context()
+	var p domain.UpdatePlanRequestDTO
+	requestId, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		return err
+	}
+
+	if err := ctx.Bind(&p); err != nil {
+		return common.ErrHttpBadRequest(err)
+	}
+
+	err = r.pru.Update(c, uint(requestId), p)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(http.StatusOK, "OK")
+}
+
 // Store godoc
 // @Summary  Create a request for a plan
 // @Tags     request,user,plan
@@ -65,35 +97,11 @@ func (r RequestHttpHandler) Store(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, "OK")
 }
 
-// Accept godoc
-// @Summary  Accept a plan's request
-// @Tags     request,user,plan
-// @Security  ApiKeyAuth
-// @Accept   json
-// @Produce  json
-// @Success   200  {string}  string  "ok"
-// @Router   /users/plans/requests/:id/accept [put]
-func (r RequestHttpHandler) Accept(ctx echo.Context) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-// Reject godoc
-// @Summary  Reject a plan's request
-// @Tags     request,user,plan
-// @Security  ApiKeyAuth
-// @Accept   json
-// @Produce  json
-// @Success   200  {string}  string  "ok"
-// @Router   /users/plans/requests/:id/reject [put]
-func (r RequestHttpHandler) Reject(ctx echo.Context) error {
-	//TODO implement me
-	panic("implement me")
-}
-
 func NewPlanRequestHttpHandler(e *echo.Echo, pru domain.PlanRequestUseCase) domain.PlanRequestDelivery {
 	handler := RequestHttpHandler{e, pru}
-	e.POST("/users/plans/:id/requests", handler.Store)
-	e.GET("/users/plans/requests", handler.Fetch)
+	e.POST("/users/plans/:id/requests", handler.Store, common.AuthMiddleWare())
+	e.GET("/users/plans/requests", handler.Fetch, common.AuthMiddleWare())
+	e.PATCH("/users/plans/requests/:id", handler.Update, common.AuthMiddleWare())
+
 	return handler
 }

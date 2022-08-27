@@ -61,6 +61,10 @@ type StorePlanRequestUseCaseDTO struct {
 	RequestTypeID uint
 }
 
+type UpdatePlanRequestDTO struct {
+	RequestStatusID uint
+}
+
 type PlanRequestDelivery interface {
 	Fetch(ctx echo.Context) error
 	Store(ctx echo.Context) error
@@ -69,9 +73,12 @@ type PlanRequestDelivery interface {
 type PlanRequestUseCase interface {
 	Store(ctx context.Context, request StorePlanRequestUseCaseDTO) error
 	Fetch(ctx context.Context) ([]PlanRequest, error)
+	Update(ctx context.Context, requestId uint, dto UpdatePlanRequestDTO) error
 }
 
 type PlanRequestRepository interface {
 	Store(ctx context.Context, request PlanRequest) error
 	Fetch(ctx context.Context) ([]PlanRequest, error)
+	GetById(ctx context.Context, id uint) (PlanRequest, error)
+	Update(ctx context.Context, request *PlanRequest) error
 }
