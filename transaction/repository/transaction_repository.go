@@ -28,7 +28,7 @@ func (t TransactionRepository) GetTotalProfitByUserId(ctx context.Context, userI
 
 func (t TransactionRepository) Fetch(ctx context.Context) ([]domain.Transaction, error) {
 	var transactions []domain.Transaction
-	err := t.db.WithContext(ctx).Preload("User").Find(&transactions).Error
+	err := t.db.WithContext(ctx).Preload("User").Preload("TransactionType").Find(&transactions).Error
 	return transactions, err
 }
 

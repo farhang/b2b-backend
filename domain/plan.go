@@ -32,14 +32,14 @@ type PlanResponseDTO struct {
 }
 
 type GetMyPlansDTO struct {
-	ID            uint   `json:"id"`
-	PlanId        uint   `json:"plan_id"`
-	Title         string `json:"title"`
-	Description   string `json:"description"`
-	ProfitPercent int    `json:"profit"`
-	Duration      int    `json:"duration"`
-	Amount        int    `json:"amount"`
-	Status        string `json:"status"`
+	ID            uint    `json:"id"`
+	PlanId        uint    `json:"plan_id"`
+	Title         string  `json:"title"`
+	Description   string  `json:"description"`
+	ProfitPercent int     `json:"profit"`
+	Duration      int     `json:"duration"`
+	Amount        float64 `json:"amount"`
+	Status        string  `json:"status"`
 }
 
 type PlanUseCase interface {

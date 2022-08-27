@@ -10,6 +10,10 @@ type userPlanUseCase struct {
 	upr domain.UserPlanRepository
 }
 
+func (up userPlanUseCase) Update(ctx context.Context, dto domain.UpdateUserPlanDTO, id uint) error {
+	return up.upr.Update(ctx, dto, id)
+}
+
 func (up userPlanUseCase) Fetch(ctx context.Context) ([]domain.UserPlan, error) {
 	return up.upr.Fetch(ctx)
 }

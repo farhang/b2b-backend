@@ -5,10 +5,21 @@ import (
 	"context"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type UserPlanRepository struct {
 	db *gorm.DB
+}
+
+func (upr *UserPlanRepository) Update(ctx context.Context, plan domain.UpdateUserPlanDTO, id uint) error {
+	var userPlan domain.UserPlan
+	err := upr.db.WithContext(ctx).First(&userPlan).Error
+	if err != nil {
+		return err
+	}
+	return upr.db.Model(&userPlan).Select("Amount", "UserPlanStatusId").Updates(domain.UserPlan{Amount: float64(plan.Amount), UserPlanStatusId: plan.UserPlanStatusId}).Error
+
 }
 
 func (upr *UserPlanRepository) GetById(ctx context.Context, id uint) (domain.UserPlan, error) {
@@ -28,6 +39,15 @@ func (upr *UserPlanRepository) Store(ctx context.Context, userPlan *domain.UserP
 }
 
 func (upr *UserPlanRepository) StoreTransaction(ctx context.Context, userPlanTransaction domain.UserPlanTransaction) error {
+	if userPlanTransaction.Transaction.TransactionTypeID == 3 || userPlanTransaction.Transaction.TransactionTypeID == 5 {
+		var userplan domain.UserPlan
+		upr.db.WithContext(ctx).Preload(clause.Associations).First(&userplan, userPlanTransaction.UserPlanID)
+		amount := userplan.Amount + userPlanTransaction.Transaction.Amount
+		upr.db.Model(&userplan).Update("amount", amount)
+
+		upr.db.Save(&userplan)
+	}
+
 	return upr.db.WithContext(ctx).Create(&userPlanTransaction).Error
 }
 

@@ -833,35 +833,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/plans/:id/transactions": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "transaction",
-                    "user",
-                    "plan"
-                ],
-                "summary": "Get a plan's transactions",
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/users/plans/requests": {
             "get": {
                 "security": [
@@ -925,6 +896,53 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/domain.UpdatePlanRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/plans/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transaction",
+                    "user",
+                    "plan"
+                ],
+                "summary": "update user's plan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user plan id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update User plan",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UpdateUserPlanDTO"
                         }
                     }
                 ],
@@ -1156,7 +1174,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "amount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "description": {
                     "type": "string"
@@ -1365,6 +1383,17 @@ const docTemplate = `{
                 },
                 "position": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.UpdateUserPlanDTO": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "user_plan_status_id": {
+                    "type": "integer"
                 }
             }
         },

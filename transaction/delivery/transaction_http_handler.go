@@ -57,9 +57,10 @@ func (t *TransactionHttpHandler) Fetch(ctx echo.Context) error {
 	transactionsResponse := make([]domain.TransactionResponseDTO, len(transactions))
 	for i := range transactions {
 		transactionsResponse[i] = domain.TransactionResponseDTO{
-			CreatedAt: transactions[i].CreatedAt,
-			Amount:    transactions[i].Amount,
-			Email:     transactions[i].User.Email,
+			CreatedAt:       transactions[i].CreatedAt,
+			Amount:          transactions[i].Amount,
+			Email:           transactions[i].User.Email,
+			TransactionType: transactions[i].TransactionType.Name,
 		}
 	}
 

@@ -70,22 +70,36 @@ func (u UserPlanDelivery) Store(ctx echo.Context) error {
 	panic("implement me")
 }
 
-// FetchTransaction godoc
-// @Summary  Get a plan's transactions
-// @Tags     transaction,user,plan
+// Update godoc
+// @Summary  update user's plan
+// @Tags     user,plan
 // @Security  ApiKeyAuth
+// @Param    id    path    string                   true  "user plan id"
 // @Accept   json
 // @Produce  json
 // @Success   200  {string}  string  "ok"
-// @Router   /users/plans/:id/transactions [get]
-func (u UserPlanDelivery) FetchTransaction(ctx echo.Context) error {
-	//TODO implement me
-	panic("implement me")
+// @Param    message  body      domain.UpdateUserPlanDTO  true  "Update User plan"
+// @Router   /users/plans/{id} [patch]
+func (u UserPlanDelivery) Update(ctx echo.Context) error {
+	c := ctx.Request().Context()
+	planId, err := strconv.Atoi(ctx.Param("id"))
+	var p domain.UpdateUserPlanDTO
+
+	if err := ctx.Bind(&p); err != nil {
+		return common.ErrHttpBadRequest(err)
+	}
+	err = u.upu.Update(c, p, uint(planId))
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(http.StatusOK, "OK")
+
 }
 
 func NewUserPlanDelivery(e *echo.Echo, upu domain.UserPlanUseCase) domain.UserPlanDelivery {
 	handler := &UserPlanDelivery{e, upu}
 	e.POST("/users/plans/:id/transactions", handler.StoreUserPlanTransaction, common.AuthMiddleWare())
 	e.GET("/users/plans", handler.Fetch, common.AuthMiddleWare())
+	e.PATCH("/users/plans/:id", handler.Update, common.AuthMiddleWare())
 	return handler
 }
