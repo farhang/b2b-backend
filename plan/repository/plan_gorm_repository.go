@@ -4,6 +4,7 @@ import (
 	"backend-core/domain"
 	"context"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type PlanGormRepository struct {
@@ -11,18 +12,19 @@ type PlanGormRepository struct {
 }
 
 func (p PlanGormRepository) GetByUserId(ctx context.Context, id int) ([]domain.UserPlan, error) {
-	var pp []domain.UserPlan
-	err := p.db.Joins("JOIN profiles p on p.id = profile_plans.profile_id").
-		Joins("JOIN users u on u.id = p.user_id").
-		Where("u.id = ?", id).
-		Preload("Plan").
-		Find(&pp).Error
+	var userPlans []domain.UserPlan
+	//err := p.db.Joins("JOIN profiles p on p.id = profile_plans.profile_id").
+	//	Joins("JOIN users u on u.id = p.user_id").
+	//	Where("u.id = ?", id).
+	//	Preload("Plan").
+	//	Find(&pp).Error
+	//
+	//if err != nil {
+	//	return nil, err
+	//}
+	err := p.db.Where("user_id", id).Preload(clause.Associations).Find(&userPlans).Error
 
-	if err != nil {
-		return nil, err
-	}
-
-	return pp, nil
+	return userPlans, err
 }
 
 func DepositToUserPlan() {
