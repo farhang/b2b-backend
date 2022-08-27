@@ -64,7 +64,7 @@ func (ph ProfileHandler) GetById(ctx echo.Context) error {
 // @Produce  json
 // @Security  ApiKeyAuth
 // @Success  200  {object} common.ResponseDTO
-// @Router    /user/profile/ [get]
+// @Router    /user/profile [get]
 func (ph ProfileHandler) GetMyProfile(ctx echo.Context) error {
 	var c = ctx.Request().Context()
 	id := ctx.Get("userID").(int)
@@ -156,7 +156,7 @@ func NewProfileHttpHandler(e *echo.Echo, pu domain.ProfileUseCase, uu domain.Use
 	handler := &ProfileHandler{e, pu, uu}
 	pg := e.Group("profiles", common.AuthMiddleWare())
 	pg.GET("/", handler.Fetch)
-	pg.GET("/me/", handler.GetMyProfile)
+	e.GET("/user/profile", handler.GetMyProfile, common.AuthMiddleWare())
 	pg.PUT("/:id/", handler.Update)
 	pg.GET("/:id/", handler.GetById)
 	return handler

@@ -667,7 +667,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/profile/": {
+        "/user/profile": {
             "get": {
                 "security": [
                     {
