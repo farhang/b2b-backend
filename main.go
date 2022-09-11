@@ -132,7 +132,7 @@ func main() {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
-	err = db.AutoMigrate(&domain.User{}, domain.EmailVerification{}, domain.Profile{}, domain.UserPlan{})
+	err = db.AutoMigrate(&domain.User{}, domain.VerificationCode{}, domain.Profile{}, domain.UserPlan{})
 	err = db.AutoMigrate(&domain.Asset{}, domain.Plan{}, domain.Transaction{}, &domain.UserRole{})
 	err = db.AutoMigrate(&domain.UserPlanTransaction{}, domain.Order{}, domain.PlanRequest{}, &domain.OrderStatus{}, &domain.RequestStatus{}, &domain.Request{}, domain.TransactionType{})
 

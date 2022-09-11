@@ -18,8 +18,8 @@ type userUseCase struct {
 	db             *gorm.DB
 }
 
-func (uc *userUseCase) GetLatestEmailVerification(ctx context.Context, email string) (*domain.EmailVerification, error) {
-	return uc.userRepository.GetLatestEmailVerification(ctx, email)
+func (uc *userUseCase) GetLatestVerificationCode(ctx context.Context, userId uint) (*domain.VerificationCode, error) {
+	return uc.userRepository.GetLatestVerificationCode(ctx, userId)
 }
 
 func (uc *userUseCase) VerifyEmail(ctx context.Context, email string) error {
@@ -42,14 +42,13 @@ func (uc *userUseCase) GenerateVerificationCodeNumber(length int) (string, error
 
 }
 
-func (uc *userUseCase) StoreEmailVerificationCode(ctx context.Context, email string) error {
-	code, _ := uc.GenerateVerificationCodeNumber(6)
-	emailVerification := domain.EmailVerification{
-		Email:     email,
+func (uc *userUseCase) StoreVerificationCode(ctx context.Context, code string, userId uint) error {
+	emailVerification := domain.VerificationCode{
+		UserId:    userId,
 		Code:      code,
 		ExpiresAt: time.Now().UTC().Add(5 * time.Minute),
 	}
-	return uc.userRepository.StoreEmailVerificationCode(ctx, emailVerification)
+	return uc.userRepository.StoreVerificationCode(ctx, emailVerification)
 }
 
 func (uc *userUseCase) GetByEmail(ctx context.Context, email string) (*domain.User, error) {

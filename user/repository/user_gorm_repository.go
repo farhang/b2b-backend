@@ -13,9 +13,9 @@ type UserGormRepository struct {
 	db *gorm.DB
 }
 
-func (ur *UserGormRepository) GetLatestEmailVerification(ctx context.Context, email string) (*domain.EmailVerification, error) {
-	emailVerification := domain.EmailVerification{}
-	err := ur.db.WithContext(ctx).Last(&emailVerification, "email = ?", email).Error
+func (ur *UserGormRepository) GetLatestVerificationCode(ctx context.Context, userId uint) (*domain.VerificationCode, error) {
+	emailVerification := domain.VerificationCode{}
+	err := ur.db.WithContext(ctx).Last(&emailVerification, "user_id = ?", userId).Error
 	isNotFoundError := errors.Is(gorm.ErrRecordNotFound, err)
 
 	if isNotFoundError {
@@ -25,7 +25,7 @@ func (ur *UserGormRepository) GetLatestEmailVerification(ctx context.Context, em
 	return &emailVerification, err
 }
 
-func (ur *UserGormRepository) StoreEmailVerificationCode(ctx context.Context, emailVerification domain.EmailVerification) error {
+func (ur *UserGormRepository) StoreVerificationCode(ctx context.Context, emailVerification domain.VerificationCode) error {
 	result := ur.db.WithContext(ctx).Create(&emailVerification)
 	return result.Error
 }

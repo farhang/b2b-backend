@@ -34,12 +34,21 @@ func (ac *AuthJwtUseCase) Register(c context.Context, authDTO domain.RegisterReq
 }
 
 func (ac *AuthJwtUseCase) SendOTP(c context.Context, sendOTPDTO domain.SendOTPRequestDTO) error {
+
+	code, _ := ac.UserUseCase.GenerateVerificationCodeNumber(4)
+	profile, err := ac.ProfileUseCase.GetByMobileNumber(c, sendOTPDTO.MobileNumber)
+	if err != nil {
+		return err
+	}
+	err = ac.UserUseCase.StoreVerificationCode(c, code, profile.UserID)
+	if err != nil {
+		return err
+	}
 	api := kavenegar.New(os.Getenv("KAVENEGAR_API_KEY"))
 	receptor := sendOTPDTO.MobileNumber
 	template := "42844"
-	token, _ := ac.UserUseCase.GenerateVerificationCodeNumber(4)
 	params := &kavenegar.VerifyLookupParam{}
-	_, err := api.Verify.Lookup(receptor, template, token, params)
+	_, err = api.Verify.Lookup(receptor, template, code, params)
 
 	if err != nil {
 		switch err := err.(type) {
@@ -55,11 +64,24 @@ func (ac *AuthJwtUseCase) SendOTP(c context.Context, sendOTPDTO domain.SendOTPRe
 
 	return nil
 }
+
 func (ac *AuthJwtUseCase) LoginWithOTP(c context.Context, loginWithOTPDTO domain.LoginWithOTPDTO) (*string, error) {
 	p, err := ac.ProfileUseCase.GetByMobileNumber(c, loginWithOTPDTO.MobileNumber)
+
 	if err != nil {
 		return nil, err
 	}
+
+	code, err := ac.UserUseCase.GetLatestVerificationCode(c, p.UserID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if code.Code != loginWithOTPDTO.Code {
+		return nil, common.ErrNotFound
+	}
+
 	token, _ := ac.GenerateToken(domain.JwtCustomClaims{UserId: int(p.User.ID), Role: p.User.RoleID})
 	return &token, nil
 }

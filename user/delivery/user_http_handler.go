@@ -35,13 +35,20 @@ func (uh *UserHttpHandler) VerifyEmail(ctx echo.Context) error {
 		return common.ErrHttpBadRequest(err)
 	}
 	email := ctx.Param("email")
-	latestEmailVerification, err := uh.UserUseCase.GetLatestEmailVerification(c, email)
+	user, err := uh.UserUseCase.GetByEmail(c, email)
+	if err != nil {
+		return err
+	}
+	latestEmailVerification, err := uh.UserUseCase.GetLatestVerificationCode(c, user.ID)
 	if errors.Is(common.ErrNotFound, err) {
 		return common.ErrHttpNotFound(common.ErrEmailIsNotExists)
 	}
 	isCodeValid := p.Code == latestEmailVerification.Code
 	if !isCodeValid {
 		return common.ErrHttpUnprocessableEntity(common.ErrEmailVerificationCodeIsInValid)
+	}
+	if err != nil {
+		return nil
 	}
 
 	err = uh.UserUseCase.VerifyEmail(c, email)
@@ -157,15 +164,20 @@ func (uh *UserHttpHandler) GetMyPlans(ctx echo.Context) error {
 // @Router  /user/email/{email}/send-verification-code [post]
 func (uh *UserHttpHandler) SendEmailVerificationCode(ctx echo.Context) error {
 	c := ctx.Request().Context()
+	code, _ := uh.UserUseCase.GenerateVerificationCodeNumber(4)
 	email := ctx.Param("email")
+	user, err := uh.UserUseCase.GetByEmail(c, email)
+	if err != nil {
+		return err
+	}
 
-	err := uh.UserUseCase.StoreEmailVerificationCode(c, email)
+	err = uh.UserUseCase.StoreVerificationCode(c, code, user.ID)
 
 	if err != nil {
 		return err
 	}
 
-	latestEmailVerification, _ := uh.UserUseCase.GetLatestEmailVerification(c, email)
+	latestEmailVerification, _ := uh.UserUseCase.GetLatestVerificationCode(c, user.ID)
 
 	return ctx.JSON(http.StatusCreated, common.ResponseDTO{
 		Message: http.StatusText(http.StatusCreated),

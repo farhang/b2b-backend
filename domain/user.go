@@ -32,9 +32,10 @@ type User struct {
 	IsActive        bool `gorm:"default:true"`
 }
 
-type EmailVerification struct {
+type VerificationCode struct {
 	gorm.Model
-	Email     string
+	User      User
+	UserId    uint
 	Code      string
 	ExpiresAt time.Time
 }
@@ -63,8 +64,8 @@ type UserUseCase interface {
 	GetByEmail(ctx context.Context, email string) (*User, error)
 	VerifyEmail(ctx context.Context, email string) error
 	GenerateVerificationCodeNumber(length int) (string, error)
-	StoreEmailVerificationCode(ctx context.Context, email string) error
-	GetLatestEmailVerification(ctx context.Context, email string) (*EmailVerification, error)
+	StoreVerificationCode(ctx context.Context, code string, userId uint) error
+	GetLatestVerificationCode(ctx context.Context, userId uint) (*VerificationCode, error)
 	IsEmailVerified(ctx context.Context, email string) bool
 	Update(ctx context.Context, user User) error
 }
@@ -74,9 +75,9 @@ type UserRepository interface {
 	Register(ctx context.Context, registerDTO RegisterRequestDTO) error
 	GetById(ctx context.Context, id int) (*User, error)
 	GetByEmail(ctx context.Context, email string) (*User, error)
-	StoreEmailVerificationCode(ctx context.Context, emailVerification EmailVerification) error
+	StoreVerificationCode(ctx context.Context, emailVerification VerificationCode) error
 	VerifyEmail(ctx context.Context, email string) error
-	GetLatestEmailVerification(ctx context.Context, email string) (*EmailVerification, error)
+	GetLatestVerificationCode(ctx context.Context, userId uint) (*VerificationCode, error)
 	Update(ctx context.Context, user User) error
 }
 
