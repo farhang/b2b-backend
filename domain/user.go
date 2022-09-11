@@ -35,12 +35,12 @@ type User struct {
 type EmailVerification struct {
 	gorm.Model
 	Email     string
-	Code      int
+	Code      string
 	ExpiresAt time.Time
 }
 
 type VerifyRequestDTO struct {
-	Code int `json:"code"`
+	Code string `json:"code"`
 }
 
 type StoreUserRequestDTO struct {
@@ -62,7 +62,7 @@ type UserUseCase interface {
 	Register(ctx context.Context, registerDTO RegisterRequestDTO) error
 	GetByEmail(ctx context.Context, email string) (*User, error)
 	VerifyEmail(ctx context.Context, email string) error
-	GenerateVerificationCodeNumber(length int) (int, error)
+	GenerateVerificationCodeNumber(length int) (string, error)
 	StoreEmailVerificationCode(ctx context.Context, email string) error
 	GetLatestEmailVerification(ctx context.Context, email string) (*EmailVerification, error)
 	IsEmailVerified(ctx context.Context, email string) bool

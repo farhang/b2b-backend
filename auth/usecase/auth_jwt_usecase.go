@@ -10,7 +10,6 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/kavenegar/kavenegar-go"
 	"os"
-	"strconv"
 )
 
 type AuthJwtUseCase struct {
@@ -40,7 +39,7 @@ func (ac *AuthJwtUseCase) SendOTP(c context.Context, sendOTPDTO domain.SendOTPRe
 	template := "42844"
 	token, _ := ac.UserUseCase.GenerateVerificationCodeNumber(4)
 	params := &kavenegar.VerifyLookupParam{}
-	_, err := api.Verify.Lookup(receptor, template, strconv.Itoa(token), params)
+	_, err := api.Verify.Lookup(receptor, template, token, params)
 
 	if err != nil {
 		switch err := err.(type) {

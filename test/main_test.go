@@ -75,7 +75,7 @@ var _ = Describe("Main", func() {
 	}
 
 	type SendVerificationResponse struct {
-		Data int
+		Data string
 	}
 
 	var sendVerificationResponse SendVerificationResponse

@@ -8,7 +8,6 @@ import (
 	"errors"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
-	"strconv"
 	"time"
 )
 
@@ -27,20 +26,20 @@ func (uc *userUseCase) VerifyEmail(ctx context.Context, email string) error {
 	return uc.userRepository.VerifyEmail(ctx, email)
 }
 
-func (uc *userUseCase) GenerateVerificationCodeNumber(length int) (int, error) {
+func (uc *userUseCase) GenerateVerificationCodeNumber(length int) (string, error) {
 	const seed = "1234567890"
 	buffer := make([]byte, length)
 	_, err := rand.Read(buffer)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	otpCharsLength := len(seed)
 	for i := 0; i < length; i++ {
 		buffer[i] = seed[int(buffer[i])%otpCharsLength]
 	}
-	code := string(buffer)
-	return strconv.Atoi(code)
+	return string(buffer), nil
+
 }
 
 func (uc *userUseCase) StoreEmailVerificationCode(ctx context.Context, email string) error {
