@@ -14,7 +14,7 @@ type PlanRequestRepository struct {
 
 func (p PlanRequestRepository) Fetch(ctx context.Context) ([]domain.PlanRequest, error) {
 	var planRequests []domain.PlanRequest
-	err := p.db.WithContext(ctx).Preload(clause.Associations).Find(&planRequests).Error
+	err := p.db.WithContext(ctx).Preload(clause.Associations).Preload("Request.RequestStatus").Preload("Request.RequestType").Find(&planRequests).Error
 	return planRequests, err
 }
 

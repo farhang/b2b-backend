@@ -41,6 +41,9 @@ type UserPlan struct {
 	ExpiresAt        time.Time
 }
 
+type UserPlansResponseDTO struct {
+}
+
 type StoreUserPlanRequestDTO struct {
 	PlanID    uint    `json:"plan_id"`
 	Amount    float64 `json:"amount"`

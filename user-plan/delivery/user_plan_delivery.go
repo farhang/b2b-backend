@@ -107,7 +107,10 @@ func (u UserPlanDelivery) GetByUserId(ctx echo.Context) error {
 		return err
 	}
 	userPlans, err := u.upu.GetByUserId(c, uint(userId))
-	return ctx.JSON(http.StatusOK, userPlans)
+	return ctx.JSON(http.StatusOK, common.ResponseDTO{
+		Data:    userPlans,
+		Message: http.StatusText(http.StatusOK),
+	})
 }
 
 // Update godoc

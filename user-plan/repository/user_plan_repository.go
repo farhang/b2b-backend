@@ -14,7 +14,8 @@ type UserPlanRepository struct {
 
 func (upr *UserPlanRepository) GetByUserId(ctx context.Context, id uint) ([]domain.UserPlan, error) {
 	var userPlans []domain.UserPlan
-	err := upr.db.WithContext(ctx).Find(&userPlans, domain.UserPlan{UserID: id}).Error
+	err := upr.db.WithContext(ctx).Preload(clause.Associations).Find(&userPlans, domain.UserPlan{UserID: id}).Error
+
 	return userPlans, err
 }
 
