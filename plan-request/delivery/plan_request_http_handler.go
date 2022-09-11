@@ -13,6 +13,18 @@ type RequestHttpHandler struct {
 	pru domain.PlanRequestUseCase
 }
 
+// Accept godoc
+// @Summary  Accept a request
+// @Tags     request,user,plan
+// @Security  ApiKeyAuth
+// @Accept   json
+// @Produce  json
+// @Success   200  {string}  string  "ok"
+// @Router   /users/plans/requests/{id}/accept [patch]
+func Accept() {
+
+}
+
 // Fetch godoc
 // @Summary  Get plan's requests
 // @Tags     request,user,plan

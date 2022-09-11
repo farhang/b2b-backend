@@ -12,6 +12,40 @@ type AuthJwtHttpHandler struct {
 	AuthUseCase domain.AuthUseCase
 }
 
+// SendOTP godoc
+// @Summary  Send OTP code
+// @Tags     auth
+// @Accept   json
+// @Produce  json
+// @Param    message  body      domain.SendOTPRequestDTO  true  "Verify OTP"
+// @Success  200      {object}  common.ResponseDTO
+// @Router   /auth/otp/send [post]
+func (ajh AuthJwtHttpHandler) SendOTP(ctx echo.Context) error {
+	c := ctx.Request().Context()
+	var p domain.SendOTPRequestDTO
+
+	if err := ctx.Bind(&p); err != nil {
+		return common.ErrHttpBadRequest(err)
+	}
+	err := ajh.AuthUseCase.SendOTP(c, p)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(http.StatusOK, http.StatusText(http.StatusOK))
+}
+
+// VerifyOTP godoc
+// @Summary  Login with OPT
+// @Tags     auth
+// @Accept   json
+// @Produce  json
+// @Param    message  body      domain.LoginWithOTPDTO  true  "Verify OTP"
+// @Success  200      {object}  common.ResponseDTO
+// @Router   /auth/otp/login [post]
+func VerifyOTP() {
+
+}
+
 // Register godoc
 // @Summary  Register new user
 // @Tags     auth
@@ -106,6 +140,7 @@ func NewAuthHttpHandler(e *echo.Echo, authUseCase domain.AuthUseCase) domain.Aut
 	handler := &AuthJwtHttpHandler{AuthUseCase: authUseCase}
 	e.POST("/auth/register", handler.Register)
 	e.POST("/auth/login", handler.Login)
+	e.POST("/auth/otp/send", handler.SendOTP)
 	e.PATCH("/auth/reset-password", handler.ResetPassword)
 	return handler
 }

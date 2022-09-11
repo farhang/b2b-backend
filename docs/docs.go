@@ -49,6 +49,72 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/otp/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login with OPT",
+                "parameters": [
+                    {
+                        "description": "Verify OTP",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.LoginWithOTPDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.ResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/otp/send": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Send OTP code",
+                "parameters": [
+                    {
+                        "description": "Verify OTP",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.SendOTPRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.ResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/register": {
             "post": {
                 "consumes": [
@@ -177,6 +243,34 @@ const docTemplate = `{
                         }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/{id}/accept": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order",
+                    "user"
+                ],
+                "summary": "Get authenticated user orders",
                 "responses": {
                     "200": {
                         "description": "ok",
@@ -881,6 +975,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/plans/requests/{id}/accept": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "request",
+                    "user",
+                    "plan"
+                ],
+                "summary": "Accept a request",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/users/plans/{id}": {
             "patch": {
                 "security": [
@@ -1280,6 +1403,17 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.LoginWithOTPDTO": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "mobile_number": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.PlanStoreRequestDTO": {
             "type": "object",
             "properties": {
@@ -1348,6 +1482,14 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.SendOTPRequestDTO": {
+            "type": "object",
+            "properties": {
+                "mobile_number": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.StoreForAuthenticateUserDTO": {
             "type": "object",
             "properties": {
@@ -1382,7 +1524,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "amount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "expires_at": {
                     "type": "string"

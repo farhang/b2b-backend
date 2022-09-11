@@ -28,6 +28,7 @@ require (
 	github.com/go-openapi/spec v0.20.4 // indirect
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
+	github.com/kavenegar/kavenegar-go v0.0.0-20220823095116-22164713b3e0 // indirect
 	github.com/labstack/echo-contrib v0.13.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/rs/zerolog v1.27.0 // indirect

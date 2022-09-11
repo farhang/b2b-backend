@@ -33,6 +33,10 @@ func (pu ProfileUseCase) GetById(ctx context.Context, id int) (domain.Profile, e
 	return pu.pr.GetById(ctx, id)
 }
 
+func (pu ProfileUseCase) GetByMobileNumber(ctx context.Context, mobileNumber string) (domain.Profile, error) {
+	return pu.pr.GetByMobileNumber(ctx, mobileNumber)
+}
+
 func (pu ProfileUseCase) Store(ctx context.Context, profile domain.Profile) error {
 	//TODO implement me
 	panic("implement me")

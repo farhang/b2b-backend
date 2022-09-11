@@ -32,14 +32,12 @@ type UpdateProfileRequestDTO struct {
 type ProfileResponseDTO struct {
 	ID                  uint   `json:"id"`
 	UserID              uint   `json:"user_id"`
-	PlanId              uint   `json:"plan_id"`
 	Name                string `json:"name"`
 	LastName            string `json:"last_name"`
 	MobileNumber        string `json:"mobile_number"`
 	Position            string `json:"position"`
 	CompanyName         string `json:"company_name"`
 	MobileNumberCompany string `json:"mobile_number_company"`
-	IsActive            bool   `json:"is_active"`
 }
 
 type ProfileDelivery interface {
@@ -51,6 +49,7 @@ type ProfileDelivery interface {
 type ProfileUseCase interface {
 	Fetch(ctx context.Context) ([]Profile, error)
 	Store(ctx context.Context, profile Profile) error
+	GetByMobileNumber(ctx context.Context, mobileNumber string) (Profile, error)
 	GetById(ctx context.Context, id int) (Profile, error)
 	GetByUserId(ctx context.Context, id int) (Profile, error)
 	Update(ctx context.Context, profile UpdateProfileRequestDTO, id int) error
@@ -60,6 +59,7 @@ type ProfileRepository interface {
 	Update(ctx context.Context, profile Profile) error
 	Fetch(ctx context.Context) ([]Profile, error)
 	GetById(ctx context.Context, id int) (Profile, error)
+	GetByMobileNumber(ctx context.Context, mobileNumber string) (Profile, error)
 	GetByUserId(ctx context.Context, id int) (Profile, error)
 	Store(ctx context.Context, profile Profile) error
 }

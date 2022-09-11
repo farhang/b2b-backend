@@ -35,7 +35,7 @@ func (upr *UserPlanRepository) GetById(ctx context.Context, id uint) (domain.Use
 
 func (upr *UserPlanRepository) Fetch(ctx context.Context) ([]domain.UserPlan, error) {
 	var userPlans []domain.UserPlan
-	err := upr.db.WithContext(ctx).Find(&userPlans).Error
+	err := upr.db.WithContext(ctx).Preload(clause.Associations).Find(&userPlans).Error
 	return userPlans, err
 }
 

@@ -5,7 +5,6 @@ import (
 	"context"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"log"
 )
 
 type ProfileRepository struct {
@@ -25,9 +24,14 @@ func (p ProfileRepository) Update(ctx context.Context, profile domain.Profile) e
 
 }
 
+func (p ProfileRepository) GetByMobileNumber(ctx context.Context, mobileNumber string) (domain.Profile, error) {
+	var profile domain.Profile
+	err := p.db.WithContext(ctx).First(&profile, domain.Profile{MobileNumber: mobileNumber}).Error
+	return profile, err
+}
+
 func (p ProfileRepository) GetById(ctx context.Context, id int) (domain.Profile, error) {
 	var profile domain.Profile
-	log.Println("profileId", profile.ID)
 	err := p.db.WithContext(ctx).First(&profile, id).Error
 	return profile, err
 }

@@ -179,7 +179,7 @@ func main() {
 	usrUseCase := userUseCase.NewUserUseCase(usrRepository, asstUseCase, profUseCase, db)
 	plnUseCase := planGormUseCase.NewPlanUseCase(plnRepository)
 	transUseCase := transactionUseCase.NewTransactionUseCase(transRepository, usrUseCase, asstUseCase, db)
-	athUseCase := authJwtUseCase.NewJwtAuthUseCase(usrUseCase)
+	athUseCase := authJwtUseCase.NewJwtAuthUseCase(usrUseCase, profUseCase)
 	usrPlanUseCase := userPlanUseCase.NewUserPlanUseCase(usrplnRepository)
 	ordrUseCase := orderUseCase.NewOrderUseCase(ordrRespository, usrPlanUseCase)
 	usrplnRequestUsecae := userPlanRequestUseCase.NewPlanRequestUseCase(usrplnRequestRepository)

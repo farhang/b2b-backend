@@ -5,13 +5,17 @@ import (
 	"backend-core/domain"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt"
+	"github.com/kavenegar/kavenegar-go"
 	"os"
+	"strconv"
 )
 
 type AuthJwtUseCase struct {
-	UserUseCase domain.UserUseCase
+	UserUseCase    domain.UserUseCase
+	ProfileUseCase domain.ProfileUseCase
 }
 
 func (ac *AuthJwtUseCase) Register(c context.Context, authDTO domain.RegisterRequestDTO) error {
@@ -28,6 +32,29 @@ func (ac *AuthJwtUseCase) Register(c context.Context, authDTO domain.RegisterReq
 	authDTO.Password, _ = ac.UserUseCase.GeneratePasswordHash(authDTO.Password)
 
 	return ac.UserUseCase.Register(c, authDTO)
+}
+
+func (ac *AuthJwtUseCase) SendOTP(c context.Context, sendOTPDTO domain.SendOTPRequestDTO) error {
+	api := kavenegar.New(os.Getenv("KAVENEGAR_API_KEY"))
+	receptor := sendOTPDTO.MobileNumber
+	template := "42844"
+	token, _ := ac.UserUseCase.GenerateVerificationCodeNumber(4)
+	params := &kavenegar.VerifyLookupParam{}
+	_, err := api.Verify.Lookup(receptor, template, strconv.Itoa(token), params)
+
+	if err != nil {
+		switch err := err.(type) {
+		case *kavenegar.APIError:
+			fmt.Println(err.Error())
+		case *kavenegar.HTTPError:
+			fmt.Println(err.Error())
+		default:
+			fmt.Println(err.Error())
+		}
+		return err
+	}
+
+	return nil
 }
 
 func (ac *AuthJwtUseCase) Login(c context.Context, loginUserDTO domain.LoginRequestDTO) (*string, error) {
@@ -70,6 +97,6 @@ func (ac *AuthJwtUseCase) GenerateToken(claims domain.JwtCustomClaims) (string, 
 	return signedToken, err
 }
 
-func NewJwtAuthUseCase(userUseCase domain.UserUseCase) domain.AuthUseCase {
-	return &AuthJwtUseCase{userUseCase}
+func NewJwtAuthUseCase(userUseCase domain.UserUseCase, profileUseCase domain.ProfileUseCase) domain.AuthUseCase {
+	return &AuthJwtUseCase{userUseCase, profileUseCase}
 }

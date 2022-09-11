@@ -19,6 +19,15 @@ type LoginResponseDTO struct {
 	Message string            `json:"message,omitempty"`
 }
 
+type SendOTPRequestDTO struct {
+	MobileNumber string `json:"mobile_number"`
+}
+
+type LoginWithOTPDTO struct {
+	MobileNumber string `json:"mobile_number"`
+	Code         string `json:"code"`
+}
+
 type RegisterRequestDTO struct {
 	Name                string `json:"name"`
 	LastName            string `json:"last_name"`
@@ -48,8 +57,9 @@ type AuthHttpHandler interface {
 }
 
 type AuthUseCase interface {
-	Login(c context.Context, loginUserDTO LoginRequestDTO) (*string, error)
-	Register(c context.Context, registerUserDTO RegisterRequestDTO) error
+	Login(c context.Context, dto LoginRequestDTO) (*string, error)
+	Register(c context.Context, dto RegisterRequestDTO) error
+	SendOTP(c context.Context, dto SendOTPRequestDTO) error
 	GenerateToken(claims JwtCustomClaims) (string, error)
 	ResetPassword(ctx context.Context, id int, newPassword string) error
 }

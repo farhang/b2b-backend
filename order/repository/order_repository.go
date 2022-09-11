@@ -5,6 +5,7 @@ import (
 	"context"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type OrderRepository struct {
@@ -13,7 +14,7 @@ type OrderRepository struct {
 
 func (o OrderRepository) Fetch(ctx context.Context) ([]domain.Order, error) {
 	var orders []domain.Order
-	err := o.db.WithContext(ctx).Find(&orders).Error
+	err := o.db.WithContext(ctx).Preload(clause.Associations).Find(&orders).Error
 	return orders, err
 }
 

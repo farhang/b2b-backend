@@ -55,6 +55,19 @@ func (o *OrderHttpHandler) GetByUser(ctx echo.Context) error {
 	panic("implement me")
 }
 
+// Accept godoc
+// @Summary  Get authenticated user orders
+// @Tags     order,user
+// @Security  ApiKeyAuth
+// @Accept   json
+// @Produce  json
+// @Success   200  {string}  string  "ok"
+// @Router   /orders/{id}/accept [patch]
+func (o *OrderHttpHandler) Accept(ctx echo.Context) error {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Fetch godoc
 // @Summary  Get orders
 // @Tags     order
@@ -112,7 +125,7 @@ func (o *OrderHttpHandler) StoreForAuthenticateUser(ctx echo.Context) error {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, "OK")
+	return ctx.JSON(http.StatusCreated, http.StatusText(http.StatusCreated))
 }
 
 func NewOrderHttpHandler(e *echo.Echo, ou domain.OrderUseCase) domain.OrderDelivery {

@@ -75,9 +75,8 @@ func (ph ProfileHandler) GetMyProfile(ctx echo.Context) error {
 	}
 
 	pr := domain.ProfileResponseDTO{
-		ID:     p.ID,
-		UserID: p.UserID,
-		//PlanId:              p.PlanId,
+		ID:                  p.ID,
+		UserID:              p.UserID,
 		Name:                p.Name,
 		LastName:            p.LastName,
 		MobileNumber:        p.MobileNumber,
@@ -116,7 +115,6 @@ func (ph ProfileHandler) Fetch(ctx echo.Context) error {
 		profilesResponse[i].CompanyName = profiles[i].CompanyName
 		profilesResponse[i].MobileNumberCompany = profiles[i].MobileNumberCompany
 		profilesResponse[i].MobileNumberCompany = profiles[i].MobileNumberCompany
-		profilesResponse[i].IsActive = profiles[i].User.IsActive
 	}
 
 	return ctx.JSON(http.StatusOK, common.ResponseDTO{
@@ -154,9 +152,9 @@ func (ph ProfileHandler) Update(ctx echo.Context) error {
 
 func NewProfileHttpHandler(e *echo.Echo, pu domain.ProfileUseCase, uu domain.UserUseCase) domain.ProfileDelivery {
 	handler := &ProfileHandler{e, pu, uu}
+	e.GET("/user/profile", handler.GetMyProfile, common.AuthMiddleWare())
 	pg := e.Group("profiles", common.AuthMiddleWare())
 	pg.GET("/", handler.Fetch)
-	e.GET("/user/profile", handler.GetMyProfile, common.AuthMiddleWare())
 	pg.PUT("/:id/", handler.Update)
 	pg.GET("/:id/", handler.GetById)
 	return handler

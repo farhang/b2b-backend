@@ -200,18 +200,47 @@ var _ = Describe("Main", func() {
 	})
 	Describe("Plans", func() {
 		It("should be able to active a plan", func() {
+
 		})
 		It("should be able to inactive a plan", func() {
 
 		})
 		It("should one plan exist at least", func() {
+			r := common.ResponseDTO{}
+			resp, _ := client.R().
+				SetHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
+				SetResult(&r).
+				Get(fmt.Sprintf("%s/plans/", baseUrl))
+
+			Expect(resp.StatusCode()).To(Equal(200))
+			Expect(r.Data).To(Not(BeEmpty()))
+
 		})
 		It("should create plan successfully", func() {
 		})
 	})
 	Describe("Orders", func() {
-		It("should be able to create order", func() {})
-		It("should be able to accept order", func() {})
+
+		It("should be able to create order", func() {
+			po := domain.StoreForAuthenticateUserDTO{
+				PlanID: 1,
+			}
+			resp, _ := client.R().
+				SetBody(po).
+				SetHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
+				Post(fmt.Sprintf("%s/user/orders", baseUrl))
+			By("The status code should be 201")
+			Expect(resp.StatusCode()).To(Equal(http.StatusCreated))
+		})
+		It("should be able to accept order", func() {
+			p := domain.UpdateOrderDTO{OrderStatusId: 2}
+			resp, _ := client.R().
+				SetBody(p).
+				SetHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
+				Patch(fmt.Sprintf("%s/orders/%s", baseUrl, "1"))
+			By("The status code should be 200")
+			Expect(resp.StatusCode()).To(Equal(http.StatusOK))
+		})
 	})
 	Describe("Transactions plan-request", func() {
 		It("should be able to create settled transaction plan-request", func() {})
