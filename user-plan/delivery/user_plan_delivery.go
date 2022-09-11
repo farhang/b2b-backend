@@ -62,12 +62,52 @@ func (u *UserPlanDelivery) StoreUserPlanTransaction(ctx echo.Context) error {
 // @Tags     plan,user
 // @Security  ApiKeyAuth
 // @Accept   json
+// @Param    user_id    path    string true  "user id"
+// @Param    message  body   domain.StoreUserPlanRequestDTO data "payload"
 // @Produce  json
 // @Success   200  {string}  string  "ok"
-// @Router   /users/plans/ [post]
+// @Router   /users/{user_id}/plans [post]
 func (u UserPlanDelivery) Store(ctx echo.Context) error {
-	//TODO implement me
-	panic("implement me")
+	c := ctx.Request().Context()
+	userId, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		return err
+	}
+
+	var p domain.StoreUserPlanRequestDTO
+	if err := ctx.Bind(&p); err != nil {
+		return common.ErrHttpBadRequest(err)
+	}
+
+	err = u.upu.Store(c, uint(userId), p)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(http.StatusOK, common.ResponseDTO{
+		Message: http.StatusText(http.StatusOK),
+	})
+}
+
+// GetByUserId godoc
+// @Summary  Get a user plans
+// @Tags     plan,user
+// @Security  ApiKeyAuth
+// @Accept   json
+// @Param    user_id    path    string                   true  "user id"
+// @Produce  json
+// @Success   200  {string}  string  "ok"
+// @Router   /users/{user_id}/plans [get]
+func (u UserPlanDelivery) GetByUserId(ctx echo.Context) error {
+	c := ctx.Request().Context()
+	userId, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		return err
+	}
+	userPlans, err := u.upu.GetByUserId(c, uint(userId))
+	return ctx.JSON(http.StatusOK, userPlans)
 }
 
 // Update godoc
@@ -101,5 +141,7 @@ func NewUserPlanDelivery(e *echo.Echo, upu domain.UserPlanUseCase) domain.UserPl
 	e.POST("/users/plans/:id/transactions", handler.StoreUserPlanTransaction, common.AuthMiddleWare())
 	e.GET("/users/plans", handler.Fetch, common.AuthMiddleWare())
 	e.PATCH("/users/plans/:id", handler.Update, common.AuthMiddleWare())
+	e.GET("/users/:id/plans", handler.GetByUserId, common.AuthMiddleWare())
+	e.POST("/users/:id/plans", handler.Store, common.AuthMiddleWare())
 	return handler
 }

@@ -1,13 +1,17 @@
 package usecase
 
 import (
+	"backend-core/common"
 	"backend-core/domain"
 	"context"
-	"time"
 )
 
 type userPlanUseCase struct {
 	upr domain.UserPlanRepository
+}
+
+func (up userPlanUseCase) GetByUserId(ctx context.Context, userId uint) ([]domain.UserPlan, error) {
+	return up.upr.GetByUserId(ctx, userId)
 }
 
 func (up userPlanUseCase) Update(ctx context.Context, dto domain.UpdateUserPlanDTO, id uint) error {
@@ -18,14 +22,14 @@ func (up userPlanUseCase) Fetch(ctx context.Context) ([]domain.UserPlan, error) 
 	return up.upr.Fetch(ctx)
 }
 
-func (up userPlanUseCase) Store(ctx context.Context, userPlanDTO domain.StoreUserPlanRequestDTO) error {
+func (up userPlanUseCase) Store(ctx context.Context, userId uint, userPlanDTO domain.StoreUserPlanRequestDTO) error {
 	userPlan := &domain.UserPlan{
-		UserID:           userPlanDTO.UserID,
+		UserID:           userId,
 		PlanID:           userPlanDTO.PlanID,
-		Amount:           0,
+		Amount:           userPlanDTO.Amount,
 		UserPlanStatusId: 1,
-		StartedAt:        time.Now(),
-		ExpiresAt:        time.Now(),
+		StartedAt:        common.ConvertTimeStampToTime(userPlanDTO.StartedAt),
+		ExpiresAt:        common.ConvertTimeStampToTime(userPlanDTO.ExpiresAt),
 	}
 	return up.upr.Store(ctx, userPlan)
 }

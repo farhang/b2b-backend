@@ -3,6 +3,7 @@ package usecase
 import (
 	"backend-core/domain"
 	"context"
+	"strconv"
 	"time"
 )
 
@@ -45,12 +46,11 @@ func (o OrderUseCase) Update(ctx context.Context, orderId uint, p domain.UpdateO
 	isComplete := order.OrderStatusId == 2
 
 	if isComplete {
-		err = o.upu.Store(ctx, domain.StoreUserPlanRequestDTO{
-			UserID:    order.UserId,
+		err = o.upu.Store(ctx, order.UserId, domain.StoreUserPlanRequestDTO{
 			PlanID:    order.PlanID,
 			Amount:    0,
-			StartedAt: time.Now(),
-			ExpiresAt: time.Now(),
+			StartedAt: strconv.FormatInt(time.Now().Unix(), 10),
+			ExpiresAt: strconv.FormatInt(time.Now().Unix(), 10),
 		})
 		if err != nil {
 			return err

@@ -12,6 +12,12 @@ type UserPlanRepository struct {
 	db *gorm.DB
 }
 
+func (upr *UserPlanRepository) GetByUserId(ctx context.Context, id uint) ([]domain.UserPlan, error) {
+	var userPlans []domain.UserPlan
+	err := upr.db.WithContext(ctx).Find(&userPlans, domain.UserPlan{UserID: id}).Error
+	return userPlans, err
+}
+
 func (upr *UserPlanRepository) Update(ctx context.Context, plan domain.UpdateUserPlanDTO, id uint) error {
 	var userPlan domain.UserPlan
 	err := upr.db.WithContext(ctx).First(&userPlan, id).Error
@@ -19,7 +25,6 @@ func (upr *UserPlanRepository) Update(ctx context.Context, plan domain.UpdateUse
 		return err
 	}
 	return upr.db.Model(&userPlan).Select("Amount", "UserPlanStatusId").Updates(domain.UserPlan{Amount: float64(plan.Amount), UserPlanStatusId: plan.UserPlanStatusId}).Error
-
 }
 
 func (upr *UserPlanRepository) GetById(ctx context.Context, id uint) (domain.UserPlan, error) {

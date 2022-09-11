@@ -42,11 +42,10 @@ type UserPlan struct {
 }
 
 type StoreUserPlanRequestDTO struct {
-	UserID    uint
-	PlanID    uint
-	Amount    int
-	StartedAt time.Time
-	ExpiresAt time.Time
+	PlanID    uint    `json:"plan_id"`
+	Amount    float64 `json:"amount"`
+	StartedAt string  `json:"started_at"`
+	ExpiresAt string  `json:"expires_at"`
 }
 
 type UpdateUserPlanDTO struct {
@@ -64,16 +63,20 @@ type UserPlanDelivery interface {
 	Fetch(ctx echo.Context) error
 	Store(ctx echo.Context) error
 }
+
 type UserPlanRepository interface {
 	StoreTransaction(ctx context.Context, userPlanTransaction UserPlanTransaction) error
 	Store(ctx context.Context, userPlan *UserPlan) error
 	Fetch(ctx context.Context) ([]UserPlan, error)
 	GetById(ctx context.Context, id uint) (UserPlan, error)
 	Update(ctx context.Context, plan UpdateUserPlanDTO, id uint) error
+	GetByUserId(ctx context.Context, id uint) ([]UserPlan, error)
 }
+
 type UserPlanUseCase interface {
 	Fetch(ctx context.Context) ([]UserPlan, error)
-	Store(ctx context.Context, userPlanDTO StoreUserPlanRequestDTO) error
+	Store(ctx context.Context, userId uint, userPlanDTO StoreUserPlanRequestDTO) error
 	StoreTransaction(ctx context.Context, userPlanTransactionDTO StoreUserPlanTransactionDTO, planId uint) error
 	Update(ctx context.Context, dto UpdateUserPlanDTO, id uint) error
+	GetByUserId(ctx context.Context, userId uint) ([]UserPlan, error)
 }
