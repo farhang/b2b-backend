@@ -56,6 +56,14 @@ func (ac *AuthJwtUseCase) SendOTP(c context.Context, sendOTPDTO domain.SendOTPRe
 
 	return nil
 }
+func (ac *AuthJwtUseCase) LoginWithOTP(c context.Context, loginWithOTPDTO domain.LoginWithOTPDTO) (*string, error) {
+	p, err := ac.ProfileUseCase.GetByMobileNumber(c, loginWithOTPDTO.MobileNumber)
+	if err != nil {
+		return nil, err
+	}
+	token, _ := ac.GenerateToken(domain.JwtCustomClaims{UserId: int(p.User.ID), Role: p.User.RoleID})
+	return &token, nil
+}
 
 func (ac *AuthJwtUseCase) Login(c context.Context, loginUserDTO domain.LoginRequestDTO) (*string, error) {
 	user, err := ac.UserUseCase.GetByEmail(c, loginUserDTO.Email)

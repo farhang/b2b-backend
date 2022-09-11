@@ -60,6 +60,7 @@ type AuthUseCase interface {
 	Login(c context.Context, dto LoginRequestDTO) (*string, error)
 	Register(c context.Context, dto RegisterRequestDTO) error
 	SendOTP(c context.Context, dto SendOTPRequestDTO) error
+	LoginWithOTP(c context.Context, dto LoginWithOTPDTO) (*string, error)
 	GenerateToken(claims JwtCustomClaims) (string, error)
 	ResetPassword(ctx context.Context, id int, newPassword string) error
 }

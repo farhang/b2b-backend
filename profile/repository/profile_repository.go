@@ -26,7 +26,7 @@ func (p ProfileRepository) Update(ctx context.Context, profile domain.Profile) e
 
 func (p ProfileRepository) GetByMobileNumber(ctx context.Context, mobileNumber string) (domain.Profile, error) {
 	var profile domain.Profile
-	err := p.db.WithContext(ctx).First(&profile, domain.Profile{MobileNumber: mobileNumber}).Error
+	err := p.db.WithContext(ctx).Preload(clause.Associations).First(&profile, domain.Profile{MobileNumber: mobileNumber}).Error
 	return profile, err
 }
 
