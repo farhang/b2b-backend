@@ -40,6 +40,19 @@ type UserPlan struct {
 	StartedAt        time.Time
 	ExpiresAt        time.Time
 }
+type UserPlansRes struct {
+	gorm.Model
+	User             User
+	UserID           uint
+	Plan             Plan
+	PlanID           uint
+	Amount           float64
+	UserPlanStatus   UserPlanStatus
+	UserPlanStatusId uint
+	StartedAt        time.Time
+	ExpiresAt        time.Time
+	Profile          Profile
+}
 
 type UserPlansResponseDTO struct {
 }
@@ -70,14 +83,14 @@ type UserPlanDelivery interface {
 type UserPlanRepository interface {
 	StoreTransaction(ctx context.Context, userPlanTransaction UserPlanTransaction) error
 	Store(ctx context.Context, userPlan *UserPlan) error
-	Fetch(ctx context.Context) ([]UserPlan, error)
+	Fetch(ctx context.Context) ([]UserPlansRes, error)
 	GetById(ctx context.Context, id uint) (UserPlan, error)
 	Update(ctx context.Context, plan UpdateUserPlanDTO, id uint) error
 	GetByUserId(ctx context.Context, id uint) ([]UserPlan, error)
 }
 
 type UserPlanUseCase interface {
-	Fetch(ctx context.Context) ([]UserPlan, error)
+	Fetch(ctx context.Context) ([]UserPlansRes, error)
 	Store(ctx context.Context, userId uint, userPlanDTO StoreUserPlanRequestDTO) error
 	StoreTransaction(ctx context.Context, userPlanTransactionDTO StoreUserPlanTransactionDTO, planId uint) error
 	Update(ctx context.Context, dto UpdateUserPlanDTO, id uint) error

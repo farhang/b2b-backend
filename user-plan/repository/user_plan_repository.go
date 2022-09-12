@@ -34,10 +34,30 @@ func (upr *UserPlanRepository) GetById(ctx context.Context, id uint) (domain.Use
 	return userPlan, err
 }
 
-func (upr *UserPlanRepository) Fetch(ctx context.Context) ([]domain.UserPlan, error) {
+func (upr *UserPlanRepository) Fetch(ctx context.Context) ([]domain.UserPlansRes, error) {
 	var userPlans []domain.UserPlan
+	var userPlansRes []domain.UserPlansRes
 	err := upr.db.WithContext(ctx).Preload(clause.Associations).Find(&userPlans).Error
-	return userPlans, err
+	for _, element := range userPlans {
+		var userPlanRes domain.UserPlansRes
+		var profile domain.Profile
+		upr.db.First(&profile).Where("user_id = ? ", element.UserID)
+		userPlanRes = domain.UserPlansRes{
+			Model:            element.Model,
+			User:             element.User,
+			UserID:           element.UserID,
+			Plan:             element.Plan,
+			PlanID:           element.PlanID,
+			Amount:           element.Amount,
+			UserPlanStatus:   element.UserPlanStatus,
+			UserPlanStatusId: element.UserPlanStatusId,
+			StartedAt:        element.StartedAt,
+			ExpiresAt:        element.ExpiresAt,
+			Profile:          profile,
+		}
+		userPlansRes = append(userPlansRes, userPlanRes)
+	}
+	return userPlansRes, err
 }
 
 func (upr *UserPlanRepository) Store(ctx context.Context, userPlan *domain.UserPlan) error {

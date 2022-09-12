@@ -18,7 +18,7 @@ func (up userPlanUseCase) Update(ctx context.Context, dto domain.UpdateUserPlanD
 	return up.upr.Update(ctx, dto, id)
 }
 
-func (up userPlanUseCase) Fetch(ctx context.Context) ([]domain.UserPlan, error) {
+func (up userPlanUseCase) Fetch(ctx context.Context) ([]domain.UserPlansRes, error) {
 	return up.upr.Fetch(ctx)
 }
 
