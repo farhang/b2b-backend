@@ -86,10 +86,12 @@ func (t *TransactionHttpHandler) MyTransactions(ctx echo.Context) error {
 	transactions, err := t.tu.FetchByUserId(c, uid)
 
 	transactionsResponse := make([]domain.TransactionResponseDTO, len(transactions))
+
 	for i := range transactions {
 		transactionsResponse[i] = domain.TransactionResponseDTO{
-			CreatedAt: transactions[i].CreatedAt,
-			Amount:    transactions[i].Amount,
+			CreatedAt:       transactions[i].CreatedAt,
+			Amount:          transactions[i].Amount,
+			TransactionType: transactions[i].TransactionType.Name,
 		}
 	}
 

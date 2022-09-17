@@ -14,7 +14,7 @@ type PlanRequestRepository struct {
 
 func (p PlanRequestRepository) Fetch(ctx context.Context) ([]domain.PlanRequest, error) {
 	var planRequests []domain.PlanRequest
-	err := p.db.WithContext(ctx).Preload(clause.Associations).Preload("Request.RequestStatus").Preload("Request.RequestType").Find(&planRequests).Error
+	err := p.db.WithContext(ctx).Preload(clause.Associations).Preload("Request.RequestType").Preload("Request.RequestStatus").Preload("UserPlan.User").Preload("UserPlan.UserPlanStatus").Preload("UserPlan.Plan").Find(&planRequests).Error
 	return planRequests, err
 }
 
@@ -39,6 +39,7 @@ func NewPlanRequestRepository(db *gorm.DB) domain.PlanRequestRepository {
 		if err != nil {
 			log.Error().Err(err)
 		}
+
 	}
 	var requestStatusesCount int64
 	db.Table("request_statuses").Count(&requestStatusesCount)

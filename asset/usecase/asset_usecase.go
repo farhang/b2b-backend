@@ -6,7 +6,8 @@ import (
 )
 
 type AssetUseCase struct {
-	ar domain.AssetRepository
+	ar  domain.AssetRepository
+	upu domain.UserPlanUseCase
 }
 
 func (a AssetUseCase) DecreaseAmount(ctx context.Context, userId int, amount float64) error {
@@ -55,6 +56,6 @@ func (a AssetUseCase) UpdateAmountByUserId(ctx context.Context, userId int, amou
 	return a.ar.Update(ctx, asset)
 }
 
-func NewAssetUseCase(ar domain.AssetRepository) domain.AssetUseCase {
-	return &AssetUseCase{ar}
+func NewAssetUseCase(ar domain.AssetRepository, upu domain.UserPlanUseCase) domain.AssetUseCase {
+	return &AssetUseCase{ar, upu}
 }
