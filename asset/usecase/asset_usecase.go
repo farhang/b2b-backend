@@ -10,7 +10,7 @@ type AssetUseCase struct {
 	upu domain.UserPlanUseCase
 }
 
-func (a AssetUseCase) DecreaseAmount(ctx context.Context, userId int, amount float64) error {
+func (a AssetUseCase) DecreaseAmount(ctx context.Context, userId uint, amount float64) error {
 	currentAmount, err := a.GetAmountByUserId(ctx, userId)
 	if err != nil {
 		return err
@@ -24,7 +24,7 @@ func (a AssetUseCase) DecreaseAmount(ctx context.Context, userId int, amount flo
 	return a.UpdateAmountByUserId(ctx, userId, decreasedAmount)
 }
 
-func (a AssetUseCase) IncreaseAmount(ctx context.Context, userId int, amount float64) error {
+func (a AssetUseCase) IncreaseAmount(ctx context.Context, userId uint, amount float64) error {
 	currentAmount, err := a.GetAmountByUserId(ctx, userId)
 	if err != nil {
 		return err
@@ -39,15 +39,15 @@ func (a AssetUseCase) Store(ctx context.Context, asset domain.Asset) error {
 	return a.ar.Store(ctx, asset)
 }
 
-func (a AssetUseCase) GetAmountByUserId(ctx context.Context, userId int) (float64, error) {
-	asset, err := a.ar.GetByUserId(ctx, userId)
+func (a AssetUseCase) GetAmountByUserId(ctx context.Context, userId uint) (float64, error) {
+	amount, err := a.upu.GetTotalAmountByUserId(ctx, userId)
 	if err != nil {
 		return 0, err
 	}
-	return asset.Amount, nil
+	return amount, nil
 }
 
-func (a AssetUseCase) UpdateAmountByUserId(ctx context.Context, userId int, amount float64) error {
+func (a AssetUseCase) UpdateAmountByUserId(ctx context.Context, userId uint, amount float64) error {
 	asset, err := a.ar.GetByUserId(ctx, userId)
 	if err != nil {
 		return err

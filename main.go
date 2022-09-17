@@ -175,12 +175,12 @@ func main() {
 	usrplnRequestRepository := userPlanRequestRepository.NewPlanRequestRepository(db)
 
 	profUseCase := profileUseCase.NewProfileUseCase(profRepository)
-	asstUseCase := assetUseCase.NewAssetUseCase(asstRepository)
+	usrPlanUseCase := userPlanUseCase.NewUserPlanUseCase(usrplnRepository)
+	asstUseCase := assetUseCase.NewAssetUseCase(asstRepository, usrPlanUseCase)
 	usrUseCase := userUseCase.NewUserUseCase(usrRepository, asstUseCase, profUseCase, db)
 	plnUseCase := planGormUseCase.NewPlanUseCase(plnRepository)
 	transUseCase := transactionUseCase.NewTransactionUseCase(transRepository, usrUseCase, asstUseCase, db)
 	athUseCase := authJwtUseCase.NewJwtAuthUseCase(usrUseCase, profUseCase)
-	usrPlanUseCase := userPlanUseCase.NewUserPlanUseCase(usrplnRepository)
 	ordrUseCase := orderUseCase.NewOrderUseCase(ordrRespository, usrPlanUseCase)
 	usrplnRequestUsecae := userPlanRequestUseCase.NewPlanRequestUseCase(usrplnRequestRepository)
 

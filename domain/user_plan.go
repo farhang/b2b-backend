@@ -34,7 +34,7 @@ type UserPlan struct {
 	UserID           uint
 	Plan             Plan
 	PlanID           uint
-	Amount           float64
+	Amount           float64 `gorm:"check:amount >= 0" json:"tether_balance"`
 	UserPlanStatus   UserPlanStatus
 	UserPlanStatusId uint
 	StartedAt        time.Time
@@ -87,6 +87,7 @@ type UserPlanRepository interface {
 	GetById(ctx context.Context, id uint) (UserPlan, error)
 	Update(ctx context.Context, plan UpdateUserPlanDTO, id uint) error
 	GetByUserId(ctx context.Context, id uint) ([]UserPlan, error)
+	GetTotalAmountByUserId(ctx context.Context, userId uint) (float64, error)
 }
 
 type UserPlanUseCase interface {
@@ -95,4 +96,5 @@ type UserPlanUseCase interface {
 	StoreTransaction(ctx context.Context, userPlanTransactionDTO StoreUserPlanTransactionDTO, planId uint) error
 	Update(ctx context.Context, dto UpdateUserPlanDTO, id uint) error
 	GetByUserId(ctx context.Context, userId uint) ([]UserPlan, error)
+	GetTotalAmountByUserId(ctx context.Context, userId uint) (float64, error)
 }

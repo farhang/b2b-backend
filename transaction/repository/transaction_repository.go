@@ -24,7 +24,7 @@ func (t TransactionRepository) FetchByUserId(ctx context.Context, userId int) ([
 
 func (t TransactionRepository) GetTotalProfitByUserId(ctx context.Context, userId int) (float64, error) {
 	var amount float64
-	err := t.db.WithContext(ctx).Raw("SELECT SUM(amount) FROM transactions WHERE user_id = ? AND transaction_type = ?", userId, domain.RialDeposit).Scan(&amount).Error
+	err := t.db.WithContext(ctx).Raw("SELECT SUM(amount) FROM transactions WHERE user_id = ? AND transaction_type_id = ?", userId, 5).Scan(&amount).Error
 	return amount, err
 }
 

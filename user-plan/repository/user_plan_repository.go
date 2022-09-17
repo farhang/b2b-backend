@@ -12,6 +12,12 @@ type UserPlanRepository struct {
 	db *gorm.DB
 }
 
+func (upr *UserPlanRepository) GetTotalAmountByUserId(ctx context.Context, userId uint) (float64, error) {
+	var amount float64
+	err := upr.db.WithContext(ctx).Raw("SELECT SUM(amount) FROM user_plans WHERE user_id = ?", userId).Scan(&amount).Error
+	return amount, err
+}
+
 func (upr *UserPlanRepository) GetByUserId(ctx context.Context, id uint) ([]domain.UserPlan, error) {
 	var userPlans []domain.UserPlan
 	err := upr.db.WithContext(ctx).Preload(clause.Associations).Find(&userPlans, domain.UserPlan{UserID: id}).Error

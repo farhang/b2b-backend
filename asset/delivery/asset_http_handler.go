@@ -24,7 +24,7 @@ type assetHttpHandler struct {
 func (a assetHttpHandler) GetByUserId(ctx echo.Context) error {
 	c := ctx.Request().Context()
 	uid := ctx.Get("userID").(int)
-	amount, _ := a.au.GetAmountByUserId(c, uid)
+	amount, _ := a.au.GetAmountByUserId(c, uint(uid))
 	totalProfit, _ := a.tu.GetTotalProfitByUserId(c, uid)
 	assetResponse := domain.AssetResponseDTO{
 		Amount:      amount,

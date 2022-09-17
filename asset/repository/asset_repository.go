@@ -14,9 +14,9 @@ func (a AssetRepository) Store(ctx context.Context, asset domain.Asset) error {
 	return a.db.WithContext(ctx).Create(&asset).Error
 }
 
-func (a AssetRepository) GetByUserId(ctx context.Context, UserId int) (domain.Asset, error) {
+func (a AssetRepository) GetByUserId(ctx context.Context, UserId uint) (domain.Asset, error) {
 	asset := domain.Asset{}
-	err := a.db.WithContext(ctx).Where(domain.Asset{UserID: UserId}).First(&asset).Error
+	err := a.db.WithContext(ctx).Where(domain.Asset{UserID: int(UserId)}).First(&asset).Error
 	return asset, err
 }
 

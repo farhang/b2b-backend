@@ -50,11 +50,14 @@ func (u *UserPlanDelivery) StoreUserPlanTransaction(ctx echo.Context) error {
 	}
 
 	err = u.upu.StoreTransaction(c, p, uint(planId))
+
 	if err != nil {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, "OK")
+	return ctx.JSON(http.StatusCreated, common.ResponseDTO{
+		Message: http.StatusText(http.StatusCreated),
+	})
 }
 
 // Store godoc
@@ -135,7 +138,9 @@ func (u UserPlanDelivery) Update(ctx echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return ctx.JSON(http.StatusOK, "OK")
+	return ctx.JSON(http.StatusOK, common.ResponseDTO{
+		Message: http.StatusText(http.StatusOK),
+	})
 
 }
 

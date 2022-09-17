@@ -10,6 +10,10 @@ type userPlanUseCase struct {
 	upr domain.UserPlanRepository
 }
 
+func (up userPlanUseCase) GetTotalAmountByUserId(ctx context.Context, userId uint) (float64, error) {
+	return up.upr.GetTotalAmountByUserId(ctx, userId)
+}
+
 func (up userPlanUseCase) GetByUserId(ctx context.Context, userId uint) ([]domain.UserPlan, error) {
 	return up.upr.GetByUserId(ctx, userId)
 }
