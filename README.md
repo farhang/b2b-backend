@@ -1,8 +1,7 @@
 # Turkey exchange
 
-[![Intergration tests](https://github.com/farhang/exchange_backend/actions/workflows/intergration-test.yml/badge.svg)](https://github.com/farhang/exchange_backend/actions/workflows/intergration-test.yml)
-[![Build](https://github.com/farhang/exchange_backend/actions/workflows/build.yml/badge.svg)](https://github.com/farhang/exchange_backend/actions/workflows/build.yml)
-[![SonarCloud](https://github.com/farhang/exchange_backend/actions/workflows/sonar_cloud.yml/badge.svg)](https://github.com/farhang/exchange_backend/actions/workflows/sonar_cloud.yml)
+[![Intergration tests](https://github.com/farhang/b2b-backend/actions/workflows/intergration-test.yml/badge.svg)](https://github.com/farhang/b2b-backend/actions/workflows/intergration-test.yml)
+[![Build](https://github.com/farhang/b2b-backend/actions/workflows/build.yml/badge.svg)](https://github.com/farhang/b2b-backend/actions/workflows/build.yml)
 ## Todo 
 
 - [x] Input Validations 
