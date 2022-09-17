@@ -12,10 +12,10 @@
 - [x] Move the secret key to environment variables
 - [x] Remove redundant codes
 - [x] Add swagger 
-- [ ] Use a library for environment variables
-- [ ] Localization turkish 
+- [x] Use a library for environment variables
 - [ ] Log management
 - [ ] Install swagger & ginkgo locally 
+- [ ] Add expiration time to jwt
 - [x] Fix docker compose up postgresDB
 - [ ] Split main.go into modules
 - [ ] Add benchmarks 
