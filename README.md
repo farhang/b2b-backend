@@ -19,6 +19,7 @@
 - [x] Fix docker compose up postgresDB
 - [ ] Split main.go into modules
 - [ ] Add benchmarks 
+- [ ] Remove Kavenegar token from sourcecode
 
 ## Getting started
 ```bash
