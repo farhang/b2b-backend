@@ -13,7 +13,7 @@
 - [x] Remove redundant codes
 - [x] Add swagger 
 - [x] Use a library for environment variables
-- [ ] Log management
+- [ ] Enhance Log management Messages (we use log forwarding in digital ocean)
 - [ ] Install swagger & ginkgo locally 
 - [ ] Add expiration time to jwt
 - [x] Fix docker compose up postgresDB
