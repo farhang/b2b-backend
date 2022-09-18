@@ -18,6 +18,7 @@
 - [ ] Add expiration time to jwt
 - [x] Fix docker compose up postgresDB
 - [ ] Split main.go into modules
+- [ ] Use A Library for [Dependency injection](https://github.com/avelino/awesome-go#dependency-injection)
 - [ ] Add benchmarks 
 - [ ] Remove [Kavenegar](https://kavenegar.com/) token from .env.dev
 
