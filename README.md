@@ -25,6 +25,7 @@
 - [ ] Remove Password from some APIs 
 - [ ] Serialize all APIs 
 - [ ] Add expiration time to user-plans 
+- [ ] Add all DTOs to Swagger
 
 ## Getting started
 ```bash
