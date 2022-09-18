@@ -26,6 +26,7 @@
 - [ ] Serialize all APIs 
 - [ ] Add expiration time to user-plans 
 - [ ] Add all DTOs to Swagger
+- [ ] Enhance Error handling in all layers 
 
 ## Getting started
 ```bash
