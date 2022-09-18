@@ -1,4 +1,4 @@
-# Turkey exchange
+# Wallex B2B
 
 [![Intergration tests](https://github.com/farhang/b2b-backend/actions/workflows/intergration-test.yml/badge.svg)](https://github.com/farhang/b2b-backend/actions/workflows/intergration-test.yml)
 [![Build](https://github.com/farhang/b2b-backend/actions/workflows/build.yml/badge.svg)](https://github.com/farhang/b2b-backend/actions/workflows/build.yml)
