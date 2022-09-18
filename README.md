@@ -21,6 +21,10 @@
 - [ ] Use A Library for [Dependency injection](https://github.com/avelino/awesome-go#dependency-injection)
 - [ ] Add benchmarks 
 - [ ] Remove [Kavenegar](https://kavenegar.com/) token from .env.dev
+- [ ] Move Repository layer logics to usecase layers in all domains 
+- [ ] Remove Password from some APIs 
+- [ ] Serialize all APIs 
+- [ ] Add expiration time to user-plans 
 
 ## Getting started
 ```bash
