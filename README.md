@@ -21,7 +21,6 @@
 - [ ] Add benchmarks 
 
 ## Getting started
-#### shoud be fixed
 ```bash
 docker compose up postgresDB 
 ```
