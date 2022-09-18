@@ -194,8 +194,6 @@ var _ = Describe("Main", func() {
 				Get(fmt.Sprintf("%s/user/asset", baseUrl))
 			By("The status code should be 200")
 			Expect(resp.StatusCode()).To(Equal(200))
-			amount := r.Data.(map[string]interface{})["amount"]
-			Expect(amount).To(Equal(p.Amount))
 		})
 	})
 	Describe("Plans", func() {

@@ -24,13 +24,6 @@ func (t TransactionUseCase) Store(ctx context.Context, userId uint, trDTO domain
 		Description:       trDTO.Description,
 		UserId:            userId,
 	}
-	isRialDeposit := *domain.GetTransactionNameById(tr.TransactionTypeID) == domain.RialDeposit
-	if isRialDeposit {
-		err := t.au.IncreaseAmount(ctx, userId, tr.Amount)
-		if err != nil {
-			return err
-		}
-	}
 
 	return t.tr.Store(ctx, tr)
 }
