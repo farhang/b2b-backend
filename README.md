@@ -13,10 +13,10 @@
 - [x] Remove redundant codes
 - [x] Add swagger 
 - [x] Use a library for environment variables
+- [x] Fix docker compose up postgresDB
 - [ ] Enhance log management messages (we use log forwarding in digital ocean)
 - [ ] Install swagger & ginkgo locally 
 - [ ] Add expiration time to jwt
-- [x] Fix docker compose up postgresDB
 - [ ] Split main.go into modules
 - [ ] Use A Library for [Dependency injection](https://github.com/avelino/awesome-go#dependency-injection)
 - [ ] Add benchmarks 
