@@ -22,7 +22,7 @@
 - [ ] Add benchmarks 
 - [ ] Remove [Kavenegar](https://kavenegar.com/) token from .env.dev
 - [ ] Move Repository layer logics to usecase layers in all domains 
-- [ ] Remove Password from some APIs 
+- [ ] Remove Users's Password from some APIs 
 - [ ] Serialize all APIs 
 - [ ] Add expiration time to user-plans 
 - [ ] Add all DTOs to Swagger
